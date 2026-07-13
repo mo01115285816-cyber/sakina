@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Amiri:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap");
 
 @import "tailwindcss";
 
@@ -242,4 +242,24 @@
 @media (min-width: 700px) {
   .surah-ornament { padding: 10px 64px; margin: 24px 0 18px; }
   .surah-glyph { font-size: 38px; }
+}
+
+/* ===== Quran Title (for circles, headers, decorative titles) ===== */
+/* Uses Amiri Quran — official-style Naskh calligraphy font for Quran titles.
+   Not a QCF glyph font (QCF only has verse words). This gives authentic
+   Quranic appearance for the "القرآن الكريم" title in UI elements. */
+.quran-title {
+  font-family: 'Amiri Quran', 'Amiri', serif;
+  direction: rtl;
+  text-align: center;
+  color: #2b1a10;
+  line-height: 1.3;
+  letter-spacing: 0;
+  user-select: none;
+}
+
+.quran-title-circle {
+  font-size: clamp(28px, 8vw, 44px);
+  font-weight: 400;
+  white-space: nowrap;
 }
