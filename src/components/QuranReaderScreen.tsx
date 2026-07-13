@@ -559,7 +559,7 @@ export default function QuranReaderScreen({
               animate="animate"
               exit="exit"
               transition={pageTransition}
-              className="w-full h-full flex flex-col justify-center overflow-y-auto overflow-x-hidden py-12 sm:py-14"
+              className="w-full h-full flex flex-col justify-center overflow-y-auto overflow-x-visible py-12 sm:py-14"
             >
               <div
                 className="qcf-page select-none"

@@ -137,20 +137,19 @@
 }
 
 .qcf-line {
-  font-size: clamp(22px, 5.5vw, 38px);  /* ✅ المشكلة #1 */
-  line-height: 1.85;  /* ✅ المشكلة #2 */
+  font-size: clamp(18px, 4.2vw, 30px);  /* ✅ أصغر — الكلمات تدخل في العرض */
+  line-height: 1.85;
   text-align: center;
   direction: rtl;
-  white-space: nowrap;  /* ✅ منع كسر السطر */
+  white-space: nowrap;  /* ✅ نحافظ عليه — 15 سطر بالظبط */
   letter-spacing: 0;
-  word-spacing: 0.05em;
-  overflow-x: hidden;
+  word-spacing: 0;
 }
 
 .qcf-line.qcf-justify {
   text-align: justify;
   text-align-last: center;  /* ✅ المشكلة #4 */
-  white-space: nowrap;  /* ✅ المشكلة #5 */
+  white-space: nowrap;  /* ✅ نرجّع nowrap — 15 سطر بالظبط */
 }
 
 .qcf-word {
