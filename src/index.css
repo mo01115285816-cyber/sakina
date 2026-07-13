@@ -107,16 +107,11 @@
 }
 
 /* ===== QCF v2 Mushaf Page ===== */
-/* Responsive sizing: 15 lines must fit within viewport height.
-   QCF fonts have an actual line-height ratio of ~3.4x the font-size
-   (because glyphs include full word height with diacritics).
-   We calculate font-size so 15 lines fit the available height.
-   Available height = viewport - 110px (header/footer/padding). */
 .qcf-page {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 4px 8px 4px;
+  padding: 4px 8px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -124,18 +119,11 @@
 }
 
 .qcf-line {
-  /* QCF actual line-height ratio ≈ 3.4x font-size
-     Available height ≈ 100vh - 110px (header/footer/padding)
-     For 15 lines: font-size = availableHeight / 15 / 3.4
-     Cap by viewport width to prevent horizontal overflow. */
-  font-size: min(
-    calc((100vh - 110px) / 15 / 3.4),
-    calc((100vw - 16px) / 9)
-  );
-  line-height: 1;
+  font-size: clamp(22px, 5.5vw, 38px);  /* ✅ المشكلة #1 */
+  line-height: 1.85;  /* ✅ المشكلة #2 */
   text-align: center;
   direction: rtl;
-  white-space: nowrap;
+  white-space: nowrap;  /* ✅ منع كسر السطر */
   letter-spacing: 0;
   word-spacing: 0.05em;
   overflow-x: hidden;
@@ -143,15 +131,15 @@
 
 .qcf-line.qcf-justify {
   text-align: justify;
-  text-align-last: justify;
-  white-space: normal;
+  text-align-last: center;  /* ✅ المشكلة #4 */
+  white-space: nowrap;  /* ✅ المشكلة #5 */
 }
 
 .qcf-word {
+  display: inline;  /* ✅ المشكلة #3 */
+  /* ❌ لا padding — المشكلة #6 */
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
-  display: inline-block;
-  padding: 0 1px;
   border-radius: 3px;
 }
 
@@ -179,27 +167,15 @@
   white-space: nowrap;
   margin: 6px 0 3px;
   opacity: 1;
-  /* Uses the page's QCF font (inherited from .qcf-page) since basmala is now a QCF glyph */
 }
 
+/* Responsive */
 @media (min-width: 700px) {
-  .qcf-page { padding: 8px 16px 8px; }
-  .qcf-line {
-    font-size: min(
-      calc((100vh - 110px) / 15 / 3.4),
-      calc((100vw - 32px) / 9)
-    );
-  }
+  .qcf-page { padding: 8px 16px; }
 }
 
 @media (min-width: 1024px) {
-  .qcf-page { padding: 12px 24px 12px; }
-  .qcf-line {
-    font-size: min(
-      calc((100vh - 110px) / 15 / 3.4),
-      calc((100vw - 48px) / 9)
-    );
-  }
+  .qcf-page { padding: 12px 24px; }
 }
 
 /* ===== Surah Name Ornament (SuraNames font) ===== */
