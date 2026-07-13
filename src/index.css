@@ -1,0 +1,245 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Amiri:wght@400;700&display=swap");
+
+@import "tailwindcss";
+
+:root {
+  font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  --top-space: 72px;
+  --side-space: 48px;
+  --bottom-space: 90px;
+}
+
+.mushaf-page {
+  width: min(100%, 850px);
+  margin: auto;
+  min-height: 100vh;
+  padding: 70px 45px 90px 45px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .mushaf-page {
+    padding: 70px 24px 90px 24px;
+  }
+}
+
+.ayah {
+  display: inline;
+}
+
+/* Hide all scrollbars globally across the entire app */
+* {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.hero-image {
+  animation: heroZoom 24s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+
+.ring-motion {
+  animation: ringPulse 3.8s ease-in-out infinite;
+}
+
+.progress-motion {
+  animation: progressGlow 2.8s ease-in-out infinite;
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes ringPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(43, 26, 15, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(43, 26, 15, 0.25));
+  }
+}
+
+@keyframes progressGlow {
+  0%,
+  100% {
+    opacity: 0.88;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Tab transition */
+.tab-content-enter {
+  animation: tabFadeIn 250ms ease-out;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ===== QCF v2 Mushaf Page ===== */
+/* Responsive sizing: 15 lines must fit within viewport height.
+   QCF fonts have an actual line-height ratio of ~3.4x the font-size
+   (because glyphs include full word height with diacritics).
+   We calculate font-size so 15 lines fit the available height.
+   Available height = viewport - 110px (header/footer/padding). */
+.qcf-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 4px 8px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  user-select: none;
+}
+
+.qcf-line {
+  /* QCF actual line-height ratio ≈ 3.4x font-size
+     Available height ≈ 100vh - 110px (header/footer/padding)
+     For 15 lines: font-size = availableHeight / 15 / 3.4
+     Cap by viewport width to prevent horizontal overflow. */
+  font-size: min(
+    calc((100vh - 110px) / 15 / 3.4),
+    calc((100vw - 16px) / 9)
+  );
+  line-height: 1;
+  text-align: center;
+  direction: rtl;
+  white-space: nowrap;
+  letter-spacing: 0;
+  word-spacing: 0.05em;
+  overflow-x: hidden;
+}
+
+.qcf-line.qcf-justify {
+  text-align: justify;
+  text-align-last: justify;
+  white-space: normal;
+}
+
+.qcf-word {
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  display: inline-block;
+  padding: 0 1px;
+  border-radius: 3px;
+}
+
+.qcf-word:hover {
+  background: var(--qcf-hover, rgba(184, 147, 90, 0.1));
+}
+
+.qcf-highlighted {
+  background: var(--qcf-highlight, rgba(184, 147, 90, 0.18));
+  color: var(--qcf-accent, #8a6a3d);
+}
+
+.qcf-playing {
+  background: var(--qcf-playing, rgba(184, 147, 90, 0.28));
+  color: var(--qcf-accent, #8a6a3d);
+}
+
+.qcf-end-mark {
+  color: var(--qcf-accent, #8a6a3d);
+  cursor: pointer;
+}
+
+.qcf-basmala {
+  text-align: center !important;
+  white-space: nowrap;
+  margin: 6px 0 3px;
+  opacity: 1;
+  /* Uses the page's QCF font (inherited from .qcf-page) since basmala is now a QCF glyph */
+}
+
+@media (min-width: 700px) {
+  .qcf-page { padding: 8px 16px 8px; }
+  .qcf-line {
+    font-size: min(
+      calc((100vh - 110px) / 15 / 3.4),
+      calc((100vw - 32px) / 9)
+    );
+  }
+}
+
+@media (min-width: 1024px) {
+  .qcf-page { padding: 12px 24px 12px; }
+  .qcf-line {
+    font-size: min(
+      calc((100vh - 110px) / 15 / 3.4),
+      calc((100vw - 48px) / 9)
+    );
+  }
+}
+
+/* ===== Surah Name Ornament (SuraNames font) ===== */
+@font-face {
+  font-family: 'SuraNames';
+  src: url('/fonts/sura_names.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.surah-ornament {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px 0 14px;
+  padding: 8px 48px;
+  border: 1.5px solid var(--qcf-accent, #b8935a);
+  border-radius: 6px;
+  position: relative;
+}
+
+.surah-ornament::before,
+.surah-ornament::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 0.5px solid var(--qcf-accent-light, #d9b877);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.surah-glyph {
+  font-size: 32px;
+  color: var(--qcf-accent, #111);
+  line-height: 1;
+  font-family: 'SuraNames', serif;
+}
+
+@media (min-width: 700px) {
+  .surah-ornament { padding: 10px 64px; margin: 24px 0 18px; }
+  .surah-glyph { font-size: 38px; }
+}
