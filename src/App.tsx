@@ -10,6 +10,8 @@ import AzkarTabScreen from "@/components/AzkarTabScreen";
 import AzkarCounterScreen from "@/components/AzkarCounterScreen";
 import SplashScreen from "@/components/SplashScreen";
 import QcfVerse from "@/components/QcfVerse";
+import { prefetchQcfFont } from "@/hooks/useQcfFont";
+import { PRELOAD_QCF_PAGES } from "@/constants/appVerses";
 import QuranTabScreen from "@/components/QuranTabScreen";
 import AsmaAlHusnaScreen from "@/components/AsmaAlHusnaScreen";
 import { SettingsScreen } from "@/components/SettingsScreen";
@@ -187,6 +189,15 @@ export default function App() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
   /* ── Effects ── */
+
+  // Preload QCF fonts for all app verses (splash, home prayer reflections, settings)
+  // at startup so verses render instantly with no flash. Total ~300KB for 5 unique pages.
+  useEffect(() => {
+    PRELOAD_QCF_PAGES.forEach((pageNumber) => {
+      prefetchQcfFont(pageNumber);
+    });
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     async function fetchWeather() {

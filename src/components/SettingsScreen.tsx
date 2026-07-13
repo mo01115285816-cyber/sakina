@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import type { CalculationMethod, AsrSchool } from "@/utils/locationDetection";
 import { calcMethodLabels, asrSchoolLabels } from "@/constants/prayerContent";
+import { APP_VERSES } from "@/constants/appVerses";
 import QcfVerse from "./QcfVerse";
 import {
   MapPin, Sliders, BookOpen, Check, Sparkles, ChevronDown, Compass, ChevronRight, Bell
@@ -436,10 +437,10 @@ export const SettingsScreen = React.memo(function SettingsScreen({
           <div className="mt-4 border-t border-[#e6dccf]/40 pt-4 flex flex-col items-center">
             <p className="text-[18px] md:text-[20px] text-[#2b1a10]/90 font-normal animate-pulse select-text" style={{ direction: 'rtl' }}>
               <QcfVerse
-                verseKey="13:28"
-                pageNumber={252}
-                wordStart={7}
-                wordEnd={11}
+                verseKey={APP_VERSES.settings.verseKey}
+                pageNumber={APP_VERSES.settings.pageNumber}
+                wordStart={APP_VERSES.settings.wordStart}
+                wordEnd={APP_VERSES.settings.wordEnd}
               />
             </p>
             <span className="text-[10px] text-[#7f6a55] font-bold mt-1">سورة الرعد - الآية ٢٨</span>

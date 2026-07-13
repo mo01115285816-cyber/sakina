@@ -1,5 +1,6 @@
 import { PrayerKey } from "@/types/app.types";
 import type { CalculationMethod, AsrSchool } from "@/utils/locationDetection";
+import { APP_VERSES } from "./appVerses";
 
 export const backgrounds: Record<PrayerKey, string> = {
   fajr: "./images/prayers/fajr.jpg",
@@ -25,9 +26,14 @@ interface Reflection {
 export const prayerReflections: Record<PrayerKey, Reflection> = {
   fajr: {
     text: "وَقُرْآنَ الْفَجْرِ ۖ إِنَّ قُرْآنَ الْفَجْرِ كَانَ مَشْهُودًا",
-    source: "سورة الإسراء 78",
+    source: APP_VERSES.fajr.source,
     isQuran: true,
-    qcf: { verseKey: "17:78", pageNumber: 290, wordStart: 8, wordEnd: 14 },
+    qcf: {
+      verseKey: APP_VERSES.fajr.verseKey,
+      pageNumber: APP_VERSES.fajr.pageNumber,
+      wordStart: APP_VERSES.fajr.wordStart,
+      wordEnd: APP_VERSES.fajr.wordEnd,
+    },
   },
   sunrise: {
     text: "مَن صَلَّى الصُّبْحَ فَهُوَ فِي ذِمَّةِ اللَّهِ",
@@ -41,21 +47,36 @@ export const prayerReflections: Record<PrayerKey, Reflection> = {
   },
   asr: {
     text: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ",
-    source: "سورة البقرة 238",
+    source: APP_VERSES.asr.source,
     isQuran: true,
-    qcf: { verseKey: "2:238", pageNumber: 39, wordStart: 1, wordEnd: 5 },
+    qcf: {
+      verseKey: APP_VERSES.asr.verseKey,
+      pageNumber: APP_VERSES.asr.pageNumber,
+      wordStart: APP_VERSES.asr.wordStart,
+      wordEnd: APP_VERSES.asr.wordEnd,
+    },
   },
   maghrib: {
     text: "أَقِمِ الصَّلَاةَ لِدُلُوكِ الشَّمْسِ إِلَىٰ غَسَقِ اللَّيْلِ",
-    source: "سورة الإسراء 78",
+    source: APP_VERSES.maghrib.source,
     isQuran: true,
-    qcf: { verseKey: "17:78", pageNumber: 290, wordStart: 1, wordEnd: 7 },
+    qcf: {
+      verseKey: APP_VERSES.maghrib.verseKey,
+      pageNumber: APP_VERSES.maghrib.pageNumber,
+      wordStart: APP_VERSES.maghrib.wordStart,
+      wordEnd: APP_VERSES.maghrib.wordEnd,
+    },
   },
   isha: {
     text: "وَمِنَ اللَّيْلِ فَسَبِّحْهُ وَأَدْبَارَ السُّجُودِ",
-    source: "سورة ق 40",
+    source: APP_VERSES.isha.source,
     isQuran: true,
-    qcf: { verseKey: "50:40", pageNumber: 520, wordStart: 1, wordEnd: 5 },
+    qcf: {
+      verseKey: APP_VERSES.isha.verseKey,
+      pageNumber: APP_VERSES.isha.pageNumber,
+      wordStart: APP_VERSES.isha.wordStart,
+      wordEnd: APP_VERSES.isha.wordEnd,
+    },
   },
 };
 

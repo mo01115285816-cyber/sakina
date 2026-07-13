@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import QcfVerse from "./QcfVerse";
+import { APP_VERSES } from "@/constants/appVerses";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -46,10 +47,10 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             >
               <QcfVerse
-                verseKey="4:103"
-                pageNumber={95}
-                wordStart={14}
-                wordEnd={20}
+                verseKey={APP_VERSES.splash.verseKey}
+                pageNumber={APP_VERSES.splash.pageNumber}
+                wordStart={APP_VERSES.splash.wordStart}
+                wordEnd={APP_VERSES.splash.wordEnd}
               />
             </motion.div>
 
