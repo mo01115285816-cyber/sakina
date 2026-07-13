@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import recitersRouter from "./routes/reciters";
 import quranReflectionRouter from "./routes/quran-reflection";
+import sakeenahAiRouter from "./routes/sakeenah-ai";
 
 async function startServer() {
   const app = express();
@@ -14,6 +15,7 @@ async function startServer() {
   // API routes
   app.use("/api", recitersRouter);
   app.use("/api/quran", quranReflectionRouter);
+  app.use("/api/sakeenah-ai", sakeenahAiRouter);
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {

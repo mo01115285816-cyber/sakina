@@ -13,12 +13,13 @@ import QcfVerse from "@/components/QcfVerse";
 import { prefetchQcfFont } from "@/hooks/useQcfFont";
 import { PRELOAD_QCF_PAGES } from "@/constants/appVerses";
 import QuranTabScreen from "@/components/QuranTabScreen";
+import { SakeenahAIScreen } from "@/components/SakeenahAIScreen";
 import AsmaAlHusnaScreen from "@/components/AsmaAlHusnaScreen";
 import { SettingsScreen } from "@/components/SettingsScreen";
 import { WeatherDisplay } from "@/components/WeatherDisplay";
 import { HadithCard } from "@/components/HadithCard";
 import { PrayerNotificationsService } from "@/services/PrayerNotificationsService";
-import { BookOpenText } from "lucide-react";
+import { BookOpenText, Sparkles } from "lucide-react";
 import { PrayerKey, TabType, AzkarCounterType, WeatherData } from "@/types/app.types";
 import { backgrounds, prayerReflections, calcMethodLabels, asrSchoolLabels } from "@/constants/prayerContent";
 import { ringRadius, ringLength, TOTAL_SLIDES, SWIPE_THRESHOLD_PX, SWIPE_VELOCITY_PX, DIRECTION_LOCK_PX, EDGE_RESISTANCE } from "@/constants/uiConstants";
@@ -827,6 +828,11 @@ export default function App() {
           <QuranTabScreen onBack={handleBackToMain} onHideNavChange={setQuranHideNav} />
         </div>
 
+        {/* TAB: SAKEENAH AI */}
+        <div className={activeTab === "sakeenah-ai" && !showAzkarCounter ? "block relative w-full h-dvh overflow-hidden" : "hidden"}>
+          <SakeenahAIScreen onBack={handleBackToMain} />
+        </div>
+
         {/* TAB: SETTINGS */}
         <div className={activeTab === "settings" && !showAzkarCounter ? "block" : "hidden"}>
           <SettingsScreen
@@ -866,12 +872,13 @@ export default function App() {
       {/* ═══════════════════════════════════════════════════════════════
           FLOATING BOTTOM NAVIGATION
           ═══════════════════════════════════════════════════════════════ */}
-      {!showAzkarCounter && !quranHideNav && !showAsmaAlHusna && activeTab !== "settings" && (
+      {!showAzkarCounter && !quranHideNav && !showAsmaAlHusna && activeTab !== "settings" && activeTab !== "sakeenah-ai" && (
         <nav className="fixed inset-x-0 bottom-6 z-40 flex justify-center pointer-events-none">
           <div className="pointer-events-auto flex items-center gap-1 rounded-[32px] border border-white/20 bg-[#2b1a10]/85 px-1.5 py-1.5 shadow-[0_16px_40px_rgba(43,26,16,0.35)] backdrop-blur-xl">
             {[
               { id: "main", label: "الرئيسية", icon: <HomeIcon /> },
               { id: "quran", label: "القرآن", icon: <BookOpenText className="h-[17px] w-[17px] text-current" strokeWidth={2} /> },
+              { id: "sakeenah-ai", label: "سكينة AI", icon: <Sparkles className="h-[17px] w-[17px] text-current" strokeWidth={2} /> },
               { id: "azkar", label: "الأذكار", icon: <AdhkarIcon /> },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
