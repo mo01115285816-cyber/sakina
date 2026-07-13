@@ -9,6 +9,7 @@ import ManualLocationDialog from "@/components/ManualLocationDialog";
 import AzkarTabScreen from "@/components/AzkarTabScreen";
 import AzkarCounterScreen from "@/components/AzkarCounterScreen";
 import SplashScreen from "@/components/SplashScreen";
+import QcfVerse from "@/components/QcfVerse";
 import QuranTabScreen from "@/components/QuranTabScreen";
 import AsmaAlHusnaScreen from "@/components/AsmaAlHusnaScreen";
 import { SettingsScreen } from "@/components/SettingsScreen";
@@ -659,12 +660,26 @@ export default function App() {
 
                 <div className="mt-14 mb-2 flex flex-col items-center justify-center text-center">
                   <div className="flex flex-col items-center max-w-[340px] space-y-3">
-                    <p 
-                      className={`leading-relaxed drop-shadow-sm ${state.reflection.isQuran ? "text-[18px] text-[#f4ecd8] font-medium" : "text-[15px] text-white/90 font-bold"}`}
-                      style={state.reflection.isQuran ? { fontFamily: '"Amiri", "Aref Ruqaa", serif', lineHeight: '1.7' } : {}}
-                    >
-                      {state.reflection.isQuran ? `﴿ ${state.reflection.text} ﴾` : `« ${state.reflection.text} »`}
-                    </p>
+                    {state.reflection.isQuran && state.reflection.qcf ? (
+                      <p
+                        className="leading-relaxed drop-shadow-sm text-[20px] sm:text-[22px] text-[#f4ecd8] font-medium"
+                        style={{ direction: 'rtl' }}
+                      >
+                        <QcfVerse
+                          verseKey={state.reflection.qcf.verseKey}
+                          pageNumber={state.reflection.qcf.pageNumber}
+                          wordStart={state.reflection.qcf.wordStart}
+                          wordEnd={state.reflection.qcf.wordEnd}
+                        />
+                      </p>
+                    ) : (
+                      <p
+                        className="leading-relaxed drop-shadow-sm text-[15px] text-white/90 font-bold"
+                        style={{ direction: 'rtl' }}
+                      >
+                        {`« ${state.reflection.text} »`}
+                      </p>
+                    )}
                     <p className="text-[10px] font-bold text-white/80 tracking-wide bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">
                       {state.reflection.source}
                     </p>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import QcfVerse from "./QcfVerse";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -35,17 +36,22 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
           {/* Central Typographic Verse Only */}
           <div className="relative z-10 flex flex-col items-center max-w-2xl w-full text-center px-4">
-            {/* The Quranic Verse */}
-            <motion.p
+            {/* The Quranic Verse - rendered with official QCF v2 font */}
+            <motion.div
               id="splash-verse"
-              className="text-[18px] min-[360px]:text-[20px] min-[400px]:text-[22px] sm:text-2xl md:text-3xl lg:text-4xl font-normal leading-relaxed text-[#2b1a10] drop-shadow-sm font-quran whitespace-nowrap"
+              className="text-[20px] sm:text-2xl md:text-3xl lg:text-4xl font-normal leading-relaxed text-[#2b1a10] drop-shadow-sm whitespace-nowrap"
               style={{ direction: "rtl" }}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             >
-              ﴿ إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا ﴾
-            </motion.p>
+              <QcfVerse
+                verseKey="4:103"
+                pageNumber={95}
+                wordStart={14}
+                wordEnd={20}
+              />
+            </motion.div>
 
             {/* Premium Verse Source */}
             <motion.span

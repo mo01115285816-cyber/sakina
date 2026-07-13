@@ -339,7 +339,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
                       <span>الدليل والأثر من القرآن والسنة</span>
                     </h4>
                     <div className="rounded-2xl border border-amber-900/10 bg-amber-50/20 p-4 text-center">
-                      <p className="text-[16px] md:text-[18px] font-normal leading-relaxed text-[#593d18] font-quran select-text">
+                      <p className="text-[16px] md:text-[18px] font-normal leading-relaxed text-[#593d18] select-text" style={{ fontFamily: '"Amiri", "Cairo", serif' }}>
                         {selectedName.proof}
                       </p>
                     </div>

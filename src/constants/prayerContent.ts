@@ -10,13 +10,53 @@ export const backgrounds: Record<PrayerKey, string> = {
   isha: "./images/prayers/isha.jpg",
 };
 
-export const prayerReflections: Record<PrayerKey, { text: string; source: string; isQuran: boolean }> = {
-  fajr: { text: "وَقُرْآنَ الْفَجْرِ ۖ إِنَّ قُرْآنَ الْفَجْرِ كَانَ مَشْهُودًا", source: "سورة الإسراء 78", isQuran: true },
-  sunrise: { text: "مَن صَلَّى الصُّبْحَ فَهُوَ فِي ذِمَّةِ اللَّهِ", source: "رواه مسلم", isQuran: false },
-  dhuhr: { text: "الصَّلَاةُ نُورٌ", source: "رواه مسلم", isQuran: false },
-  asr: { text: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ", source: "سورة البقرة 238", isQuran: true },
-  maghrib: { text: "أَقِمِ الصَّلَاةَ لِدُلُوكِ الشَّمْسِ إِلَىٰ غَسَقِ اللَّيْلِ", source: "سورة الإسراء 78", isQuran: true },
-  isha: { text: "وَمِنَ اللَّيْلِ فَسَبِّحْهُ وَأَدْبَارَ السُّجُودِ", source: "سورة ق 40", isQuran: true },
+interface Reflection {
+  text: string;
+  source: string;
+  isQuran: boolean;
+  qcf?: {
+    verseKey: string;
+    pageNumber: number;
+    wordStart: number;
+    wordEnd: number;
+  };
+}
+
+export const prayerReflections: Record<PrayerKey, Reflection> = {
+  fajr: {
+    text: "وَقُرْآنَ الْفَجْرِ ۖ إِنَّ قُرْآنَ الْفَجْرِ كَانَ مَشْهُودًا",
+    source: "سورة الإسراء 78",
+    isQuran: true,
+    qcf: { verseKey: "17:78", pageNumber: 290, wordStart: 8, wordEnd: 14 },
+  },
+  sunrise: {
+    text: "مَن صَلَّى الصُّبْحَ فَهُوَ فِي ذِمَّةِ اللَّهِ",
+    source: "رواه مسلم",
+    isQuran: false,
+  },
+  dhuhr: {
+    text: "الصَّلَاةُ نُورٌ",
+    source: "رواه مسلم",
+    isQuran: false,
+  },
+  asr: {
+    text: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ",
+    source: "سورة البقرة 238",
+    isQuran: true,
+    qcf: { verseKey: "2:238", pageNumber: 39, wordStart: 1, wordEnd: 5 },
+  },
+  maghrib: {
+    text: "أَقِمِ الصَّلَاةَ لِدُلُوكِ الشَّمْسِ إِلَىٰ غَسَقِ اللَّيْلِ",
+    source: "سورة الإسراء 78",
+    isQuran: true,
+    qcf: { verseKey: "17:78", pageNumber: 290, wordStart: 1, wordEnd: 7 },
+  },
+  isha: {
+    text: "وَمِنَ اللَّيْلِ فَسَبِّحْهُ وَأَدْبَارَ السُّجُودِ",
+    source: "سورة ق 40",
+    isQuran: true,
+    qcf: { verseKey: "50:40", pageNumber: 520, wordStart: 1, wordEnd: 5 },
+  },
 };
 
 export const calcMethodLabels: Record<CalculationMethod, string> = {
