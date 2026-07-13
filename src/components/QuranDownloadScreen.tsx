@@ -90,14 +90,15 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
 
           {/* White inner circle base matching reference */}
           {/* We make it slightly smaller to create the gap between it and the progress ring */}
-          <div className="absolute inset-4 rounded-full bg-white shadow-[0_24px_50px_rgba(43,26,16,0.12)] flex flex-col items-center justify-center overflow-hidden z-10 border border-[#e6dccf]/30 px-4">
-            {/* Official-style Quran title using Amiri Quran calligraphy font */}
-            <div className="quran-title quran-title-circle">
-              القرآن الكريم
-            </div>
-            <div className="mt-2 text-[10px] font-bold text-[#b88a4f] tracking-[0.3em] font-cairo">
-              HOLY QURAN
-            </div>
+          <div className="absolute inset-4 rounded-full bg-white shadow-[0_24px_50px_rgba(43,26,16,0.12)] flex items-center justify-center overflow-hidden z-10 border border-[#e6dccf]/30">
+            {/* Official Quran calligraphy image — preloaded in index.html for instant display */}
+            <img
+              src="/images/quran-circle.png"
+              alt="القرآن الكريم"
+              className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+            />
           </div>
         </div>
 
