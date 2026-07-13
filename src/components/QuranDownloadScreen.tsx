@@ -68,38 +68,52 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
       </button>
 
       <div className="flex-1 w-full flex flex-col items-center justify-center p-6 pb-20">
-        
-        {/* Central Emblema / Circle with Progress Ring */}
+
+        {/* Central Quran calligraphy image with progress ring hugging it */}
         <div className="relative w-[280px] h-[280px] mb-8 flex items-center justify-center">
-          {/* Progress Ring */}
+          {/* Progress Ring — sits behind the image, hugging its circular edge */}
           {isDownloading && (
-            <svg className="absolute inset-0 w-full h-full -rotate-90 z-0 overflow-visible" viewBox="0 0 280 280">
-              {/* Active Progress Ring */}
-              <circle 
-                cx="140" cy="140" r="134" 
-                fill="none" 
-                stroke="#b88a4f" 
-                strokeWidth="8" 
+            <svg
+              className="absolute inset-0 w-full h-full -rotate-90 z-0 overflow-visible pointer-events-none"
+              viewBox="0 0 280 280"
+            >
+              {/* Track (subtle background ring) */}
+              <circle
+                cx="140" cy="140" r="136"
+                fill="none"
+                stroke="rgba(184, 138, 79, 0.12)"
+                strokeWidth="4"
+              />
+              {/* Active progress ring — gradient stroke for premium look */}
+              <defs>
+                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#deab65" />
+                  <stop offset="50%" stopColor="#b88a4f" />
+                  <stop offset="100%" stopColor="#8a6a3d" />
+                </linearGradient>
+              </defs>
+              <circle
+                cx="140" cy="140" r="136"
+                fill="none"
+                stroke="url(#progressGradient)"
+                strokeWidth="5"
                 strokeLinecap="round"
-                strokeDasharray="841.94"
-                strokeDashoffset={841.94 - (841.94 * progress) / 100}
+                strokeDasharray="854.51"
+                strokeDashoffset={854.51 - (854.51 * progress) / 100}
                 className="transition-all duration-500 ease-out"
+                style={{ filter: 'drop-shadow(0 2px 6px rgba(184, 138, 79, 0.3))' }}
               />
             </svg>
           )}
 
-          {/* White inner circle base matching reference */}
-          {/* We make it slightly smaller to create the gap between it and the progress ring */}
-          <div className="absolute inset-4 rounded-full bg-white shadow-[0_24px_50px_rgba(43,26,16,0.12)] flex items-center justify-center overflow-hidden z-10 border border-[#e6dccf]/30">
-            {/* Official Quran calligraphy image — preloaded in index.html for instant display */}
-            <img
-              src="/images/quran-circle.png"
-              alt="القرآن الكريم"
-              className="w-full h-full object-cover"
-              loading="eager"
-              decoding="async"
-            />
-          </div>
+          {/* Quran calligraphy image — the circle itself (transparent background, preloaded) */}
+          <img
+            src="/images/quran-circle.png"
+            alt="القرآن الكريم"
+            className="relative w-[260px] h-[260px] object-contain z-10 drop-shadow-[0_12px_28px_rgba(43,26,16,0.15)]"
+            loading="eager"
+            decoding="async"
+          />
         </div>
 
         {/* Text Details */}
