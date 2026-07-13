@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
-    "build": "npm run verify-fonts && npm run pack-fonts && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "dev": "tsx src/server/index.ts",
+    "build": "npm run verify-fonts && npm run pack-fonts && vite build && esbuild src/server/index.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "download-fonts": "node scripts/download-qcf-fonts.js",
     "pack-fonts": "node scripts/pack-qcf-fonts.js",
