@@ -878,8 +878,8 @@ export default function App() {
             {[
               { id: "main", label: "الرئيسية", icon: <HomeIcon /> },
               { id: "quran", label: "القرآن", icon: <BookOpenText className="h-[17px] w-[17px] text-current" strokeWidth={2} /> },
-              { id: "sakeenah-ai", label: "سكينة AI", icon: <Sparkles className="h-[17px] w-[17px] text-current" strokeWidth={2} /> },
               { id: "azkar", label: "الأذكار", icon: <AdhkarIcon /> },
+              { id: "sakeenah-ai", label: "سكينة AI", icon: <Sparkles className="h-[17px] w-[17px] text-current" strokeWidth={2} /> },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               return (

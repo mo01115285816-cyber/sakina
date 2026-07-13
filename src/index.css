@@ -106,6 +106,24 @@
   }
 }
 
+@keyframes textShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #7f6a55 20%, #deab65 40%, #ffffff 50%, #deab65 60%, #7f6a55 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShimmer 2.2s linear infinite;
+}
+
 /* ===== QCF v2 Mushaf Page ===== */
 .qcf-page {
   width: 100%;
