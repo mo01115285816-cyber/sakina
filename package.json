@@ -10,6 +10,7 @@
     "download-fonts": "node scripts/download-qcf-fonts.js",
     "pack-fonts": "node scripts/pack-qcf-fonts.js",
     "verify-fonts": "node scripts/verify-fonts.js",
+    "fix-basmala": "node scripts/fix-basmala-codes.js",
     "prebuild": "npm run verify-fonts"
   },
   "dependencies": {
