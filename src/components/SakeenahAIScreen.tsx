@@ -582,40 +582,39 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack }:
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 350 }}
-                className="w-full max-w-[340px] bg-gradient-to-b from-[#fdfcfb] to-[#f7f2ea] border-2 border-[#b88a4f] rounded-[28px] p-5 text-center shadow-[0_20px_50px_rgba(43,26,16,0.15)] relative overflow-hidden"
+                className="w-full max-w-[360px] bg-gradient-to-b from-[#fdfcfb] to-[#f7f2ea] border border-[#e6dccf] rounded-[28px] overflow-hidden shadow-[0_4px_16px_rgba(43,26,16,0.03)]"
               >
-                {/* Decorative punched stamp style corner indicators (بطاقة مثقبة) */}
-                <div className="absolute top-0 left-0 w-8 h-8 bg-[#ece7de] rounded-full -mt-4 -ml-4 border border-[#e6dccf]" />
-                <div className="absolute top-0 right-0 w-8 h-8 bg-[#ece7de] rounded-full -mt-4 -mr-4 border border-[#e6dccf]" />
-                <div className="absolute bottom-0 left-0 w-8 h-8 bg-[#ece7de] rounded-full -mb-4 -ml-4 border border-[#e6dccf]" />
-                <div className="absolute bottom-0 right-0 w-8 h-8 bg-[#ece7de] rounded-full -mb-4 -mr-4 border border-[#e6dccf]" />
-                
-                {/* Dotted decorative border inside */}
-                <div className="border border-dashed border-[#b88a4f]/40 rounded-[20px] p-5 flex flex-col items-center space-y-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-[#deab65] to-[#b88a4f] text-white shadow-md">
-                    <Bot size={28} strokeWidth={1.5} />
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-[17px] font-black text-[#2b1a10]">ملاذك الآمن للأسئلة الشرعية</h3>
-                    <p className="text-[12.5px] text-[#7f6a55] font-bold mt-2 leading-relaxed">
-                      تحدث بحرية تامة وبخصوصية مطلقة دون حرج. سأجيبك بدقة ومسؤولية من القرآن الكريم وصحيح البخاري ومسلم فقط.
-                    </p>
+                {/* Top accent bar — subtle warm gradient */}
+                <div className="h-1.5 bg-gradient-to-r from-[#deab65] via-[#b88a4f] to-[#deab65]" />
+
+                <div className="p-6 flex flex-col items-center text-center">
+                  {/* Icon — matches app's rounded square style */}
+                  <div className="w-16 h-16 rounded-[20px] bg-gradient-to-br from-[#deab65] to-[#b88a4f] flex items-center justify-center shadow-[0_8px_20px_rgba(184,138,79,0.25)] mb-4">
+                    <Bot size={30} strokeWidth={1.5} className="text-white" />
                   </div>
 
-                  {/* Security Label */}
-                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-500/15 border border-emerald-500/20 rounded-full text-[11px] font-black text-emerald-700">
-                    <ShieldCheck size={14} className="text-emerald-600" />
+                  {/* Title */}
+                  <h3 className="text-[19px] font-black text-[#2b1a10] mb-1">ملاذك الآمن للأسئلة الشرعية</h3>
+
+                  {/* Subtitle */}
+                  <p className="text-[13px] text-[#7f6a55] font-bold leading-relaxed mt-2 mb-4 max-w-[280px]">
+                    تحدث بحرية تامة وبخصوصية مطلقة دون حرج. سأجيبك بدقة ومسؤولية من القرآن الكريم والكتب الستة في الحديث الشريف.
+                  </p>
+
+                  {/* Security badge — subtle, matches app palette */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#b88a4f]/8 border border-[#b88a4f]/15 rounded-full text-[11px] font-bold text-[#7f6a55] mb-5">
+                    <ShieldCheck size={13} className="text-[#b88a4f]" />
                     <span>خصوصية تامة وسرية مشفرة بنسبة ١٠٠٪</span>
                   </div>
 
+                  {/* CTA button — matches app's dark button style */}
                   <button
                     type="button"
                     onClick={() => {
                       localStorage.setItem("sakeenah_welcome_dismissed", "true");
                       setShowWelcomeCard(false);
                     }}
-                    className="w-full bg-[#2b1a10] text-[#fff9f1] hover:bg-[#3a2517] active:scale-95 transition-all py-2.5 rounded-xl font-black text-[13px] shadow-sm cursor-pointer mt-2"
+                    className="w-full bg-[#2b1a10] text-[#fff9f1] hover:bg-[#3a2517] active:scale-[0.98] transition-all py-3 rounded-[16px] font-black text-[14px] shadow-[0_4px_12px_rgba(43,26,16,0.15)] cursor-pointer"
                   >
                     بدء المحادثة المباركة
                   </button>
