@@ -320,6 +320,9 @@ export default function QuranReaderScreen({
   useEffect(() => {
     if (currentPage < 604) prefetchQcfFont(currentPage + 1);
     if (currentPage > 1) prefetchQcfFont(currentPage - 1);
+    // Always ensure QCF_P001 is loaded — basmala glyphs (0xfc41-0xfc45) are only
+    // properly defined in QCF_P001 (page 1 / Al-Fatiha), not in other page fonts
+    prefetchQcfFont(1);
   }, [currentPage]);
 
   // Lines come directly from the dataset (already grouped with surah-header/basmala/text types)
@@ -592,7 +595,7 @@ export default function QuranReaderScreen({
 
                   if (lineObj.type === 'basmala' && lineObj.qpcV2) {
                     return (
-                      <div key={`line-${lineNum}`} className="qcf-line qcf-basmala">
+                      <div key={`line-${lineNum}`} className="qcf-line qcf-basmala" style={{ fontFamily: 'QCF_P001' }}>
                         {lineObj.qpcV2}
                       </div>
                     );
