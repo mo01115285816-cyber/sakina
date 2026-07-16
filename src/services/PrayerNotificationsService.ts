@@ -51,6 +51,7 @@ export class PrayerNotificationsService {
             body: `متبقي ١٠ دقائق على صلاة ${prayerName}. ${verseText}`,
             schedule: { at: reminderTime },
             sound: 'beep.wav',
+            channelId: 'beep_channel',
             actionTypeId: 'PRAYER_REMINDER',
           }
         ]
@@ -76,6 +77,7 @@ export class PrayerNotificationsService {
             body: verseText,
             schedule: { at: prayerTime },
             sound: 'azan.wav',
+            channelId: 'azan_channel',
             actionTypeId: 'PRAYER_TIME',
           }
         ]
@@ -116,6 +118,7 @@ export class PrayerNotificationsService {
             body: "تم تفعيل الإشعارات بنجاح في تطبيق سَكِينَة. تقبل الله طاعاتكم.",
             schedule: { at: new Date(Date.now() + 1000) },
             sound: "azan.wav",
+            channelId: "azan_channel",
             actionTypeId: "TEST_NOTIFICATION",
           }
         ]
@@ -153,6 +156,7 @@ export class PrayerNotificationsService {
             body: "حان الآن وقت قراءة سورة الملك المنجية من عذاب القبر.",
             schedule: { at: targetDate },
             sound: 'beep.wav',
+            channelId: 'beep_channel',
             actionTypeId: 'MULK_REMINDER',
           }
         ]
@@ -175,6 +179,7 @@ export class PrayerNotificationsService {
             body: "حان الآن وقت قراءة سورة البقرة المباركة.",
             schedule: { at: targetDate },
             sound: 'beep.wav',
+            channelId: 'beep_channel',
             actionTypeId: 'BAQARAH_REMINDER',
           }
         ]

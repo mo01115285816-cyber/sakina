@@ -35,6 +35,8 @@
     "tailwind-merge": "3.4.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/cli": "^8.4.2",
     "@tailwindcss/vite": "4.1.17",
     "@types/express": "^5.0.6",
     "@types/node": "22.19.17",
