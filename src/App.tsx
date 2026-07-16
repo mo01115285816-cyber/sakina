@@ -21,6 +21,10 @@ import { HadithCard } from "@/components/HadithCard";
 import { PrayerNotificationsService } from "@/services/PrayerNotificationsService";
 import { BookOpenText, Sparkles } from "lucide-react";
 import { PrayerKey, TabType, AzkarCounterType, WeatherData } from "@/types/app.types";
+import { PrayerCardSpeakerIcon } from "@/components/PrayerCardSpeakerIcon";
+import { PrayerSettingsScreen } from "@/components/PrayerSettingsScreen";
+import type { AllPrayersPreferences, PrayerSettingsId } from "@/types/prayer-settings";
+import { loadPrayerPreferences, savePrayerPreferences, prayerKeyToSettingsId } from "@/types/prayer-settings";
 import { backgrounds, prayerReflections, calcMethodLabels, asrSchoolLabels } from "@/constants/prayerContent";
 import { ringRadius, ringLength, TOTAL_SLIDES, SWIPE_THRESHOLD_PX, SWIPE_VELOCITY_PX, DIRECTION_LOCK_PX, EDGE_RESISTANCE } from "@/constants/uiConstants";
 import { getDayOfYear, getCurrentPrayerIndex, getCountdownSeconds, formatCountdown } from "@/utils/timeHelpers";
@@ -189,6 +193,10 @@ export default function App() {
 
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
+  /* ── Per-Prayer Notification Preferences ── */
+  const [prayerPrefs, setPrayerPrefs] = useState<AllPrayersPreferences>(() => loadPrayerPreferences());
+  const [activePrayerSettings, setActivePrayerSettings] = useState<PrayerSettingsId | null>(null);
+
   /* ── Effects ── */
 
   // Preload QCF fonts for all app verses (splash, home prayer reflections, settings)
@@ -262,12 +270,12 @@ export default function App() {
 
             // Schedule pre-prayer reminder if enabled
             if (isPrePrayerReminderEnabled) {
-              await PrayerNotificationsService.schedulePrePrayerReminder(prayer.name, prayer.date, verseText);
+              await PrayerNotificationsService.schedulePrePrayerReminder(prayer.name, prayer.date, verseText, prayerPrefs, prayer.key);
             }
             
             // Schedule prayer time adhan if enabled
             if (isPrayerReminderEnabled) {
-              await PrayerNotificationsService.schedulePrayerTime(prayer.name, prayer.date, verseText);
+              await PrayerNotificationsService.schedulePrayerTime(prayer.name, prayer.date, verseText, prayerPrefs, prayer.key);
             }
           }
 
@@ -296,7 +304,8 @@ export default function App() {
     isMulkReminderEnabled,
     mulkReminderTime,
     isBaqarahReminderEnabled,
-    baqarahReminderTime
+    baqarahReminderTime,
+    prayerPrefs
   ]);
 
   const dateStrings = useMemo(() => {
@@ -526,6 +535,11 @@ export default function App() {
     localStorage.setItem("app_baqarahReminderTime", baqarahReminderTime);
   }, [baqarahReminderTime]);
 
+  // Persist prayer preferences on change
+  useEffect(() => {
+    savePrayerPreferences(prayerPrefs);
+  }, [prayerPrefs]);
+
   const handleOpenAzkarCounter = useCallback((type: "morning" | "evening" | "sleep" | "post_prayer") => {
     setAzkarCounterType(type);
     setShowAzkarCounter(true);
@@ -592,6 +606,22 @@ export default function App() {
         currentLat={cityLat}
         currentLon={cityLon}
       />
+
+      {/* ── Per-Prayer Settings Overlay ── */}
+      <AnimatePresence>
+        {activePrayerSettings && (
+          <PrayerSettingsScreen
+            prayerId={activePrayerSettings}
+            preferences={prayerPrefs}
+            onSave={(prefs) => setPrayerPrefs(prefs)}
+            onClose={() => setActivePrayerSettings(null)}
+            fajrTime={prayerSchedule.find(p => p.key === 'fajr')?.date}
+            maghribTime={prayerSchedule.find(p => p.key === 'maghrib')?.date}
+            sunriseTime={prayerSchedule.find(p => p.key === 'sunrise')?.date}
+            ishaTime={prayerSchedule.find(p => p.key === 'isha')?.date}
+          />
+        )}
+      </AnimatePresence>
 
       {/* ═══════════════════════════════════════════════════════════════
           TAB: MAIN (Prayer Screen)
@@ -793,6 +823,22 @@ export default function App() {
                     </div>
                     
                     <div className="flex items-center gap-2.5">
+                      {/* Speaker Icon — opens per-prayer settings */}
+                      <PrayerCardSpeakerIcon
+                        mode={(() => {
+                          const sid = prayerKeyToSettingsId(prayer.key);
+                          return sid && prayerPrefs[sid] ? prayerPrefs[sid].mode : 'beep';
+                        })()}
+                        enabled={(() => {
+                          const sid = prayerKeyToSettingsId(prayer.key);
+                          return sid ? prayerPrefs[sid]?.enabled ?? true : true;
+                        })()}
+                        isActive={prayer.isActive}
+                        onClick={() => {
+                          const sid = prayerKeyToSettingsId(prayer.key);
+                          if (sid) setActivePrayerSettings(sid);
+                        }}
+                      />
                       <p className="text-[16px] font-black tabular-nums tracking-tight" dir="rtl">
                         {prayer.time}
                         <span className={`mr-1 text-[11px] font-bold ${prayer.isActive ? 'opacity-90' : 'opacity-60'}`}>{prayer.meridiem}</span>

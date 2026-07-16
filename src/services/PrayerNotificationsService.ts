@@ -1,5 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import type { AllPrayersPreferences, PrayerSettingsId, PrayerNotificationMode } from '@/types/prayer-settings';
+import { prayerKeyToSettingsId } from '@/types/prayer-settings';
 
 export class PrayerNotificationsService {
   static isSupported(): boolean {
@@ -34,14 +36,70 @@ export class PrayerNotificationsService {
     }
   }
 
-  // 3. جدولة تذكير قبل الصلاة (10 دقائق)
-  static async schedulePrePrayerReminder(prayerName: string, prayerTime: Date, verseText: string) {
+  /**
+   * Resolve notification config based on per-prayer preference mode.
+   * Returns the appropriate channelId, sound, and extra settings.
+   */
+  private static resolveNotificationConfig(
+    mode: PrayerNotificationMode,
+    enabled: boolean
+  ): { channelId: string; sound: string | null; extra?: Record<string, unknown> } {
+    // If disabled or silent: no sound, no channel
+    if (!enabled || mode === 'silent') {
+      return { channelId: 'beep_channel', sound: null };
+    }
+
+    switch (mode) {
+      case 'beep':
+        return { channelId: 'beep_channel', sound: 'beep.wav' };
+      case 'azan_short':
+        return { channelId: 'azan_channel', sound: 'azan.wav' };
+      case 'azan_full':
+        // TODO: If custom muezzin is downloaded via Filesystem, use local URI
+        // For now, fallback to default azan.wav from res/raw/
+        return { channelId: 'azan_channel', sound: 'azan.wav' };
+      case 'vibrate_only':
+        return {
+          channelId: 'beep_channel',
+          sound: null,
+          extra: { vibrationPattern: [0, 500, 200, 500] },
+        };
+      default:
+        return { channelId: 'beep_channel', sound: 'beep.wav' };
+    }
+  }
+
+  /**
+   * 3. جدولة تذكير قبل الصلاة (10 دقائق) — with per-prayer mode support
+   */
+  static async schedulePrePrayerReminder(
+    prayerName: string,
+    prayerTime: Date,
+    verseText: string,
+    prayerPrefs?: AllPrayersPreferences,
+    prayerKey?: string
+  ) {
     if (!this.isSupported()) return;
 
+    // Resolve preference for this prayer
+    let mode: PrayerNotificationMode = 'beep';
+    let enabled = true;
+
+    if (prayerPrefs && prayerKey) {
+      const settingsId = prayerKeyToSettingsId(prayerKey);
+      if (settingsId && prayerPrefs[settingsId]) {
+        mode = prayerPrefs[settingsId].mode;
+        enabled = prayerPrefs[settingsId].enabled;
+      }
+    }
+
+    // If disabled or silent: don't schedule pre-prayer reminder
+    if (!enabled || mode === 'silent') return;
+
     const reminderTime = new Date(prayerTime.getTime() - 10 * 60 * 1000);
-    // Only schedule if the reminder time is in the future
     if (reminderTime.getTime() <= Date.now()) return;
 
+    // Pre-prayer always uses beep (regardless of prayer-time mode)
     try {
       await LocalNotifications.schedule({
         notifications: [
@@ -61,12 +119,59 @@ export class PrayerNotificationsService {
     }
   }
 
-  // 4. إشعار عند موعد الصلاة
-  static async schedulePrayerTime(prayerName: string, prayerTime: Date, verseText: string) {
+  /**
+   * 4. إشعار عند موعد الصلاة — with per-prayer mode support
+   */
+  static async schedulePrayerTime(
+    prayerName: string,
+    prayerTime: Date,
+    verseText: string,
+    prayerPrefs?: AllPrayersPreferences,
+    prayerKey?: string
+  ) {
     if (!this.isSupported()) return;
 
-    // Only schedule if the prayer time is in the future
+    // Resolve preference for this prayer
+    let mode: PrayerNotificationMode = 'beep';
+    let enabled = true;
+
+    if (prayerPrefs && prayerKey) {
+      const settingsId = prayerKeyToSettingsId(prayerKey);
+      if (settingsId && prayerPrefs[settingsId]) {
+        mode = prayerPrefs[settingsId].mode;
+        enabled = prayerPrefs[settingsId].enabled;
+      }
+    }
+
+    // If disabled: don't schedule
+    if (!enabled) return;
+
+    // If silent mode: still schedule (shows notification silently)
+    if (mode === 'silent') {
+      if (prayerTime.getTime() <= Date.now()) return;
+      try {
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              id: Math.floor(Math.random() * 1000000),
+              title: `حان الآن موعد صلاة ${prayerName}`,
+              body: verseText,
+              schedule: { at: prayerTime },
+              sound: null,
+              channelId: 'beep_channel',
+              actionTypeId: 'PRAYER_TIME',
+            }
+          ]
+        });
+      } catch (e) {
+        console.warn(`Failed to schedule silent prayer time for ${prayerName}:`, e);
+      }
+      return;
+    }
+
     if (prayerTime.getTime() <= Date.now()) return;
+
+    const config = this.resolveNotificationConfig(mode, enabled);
 
     try {
       await LocalNotifications.schedule({
@@ -76,9 +181,10 @@ export class PrayerNotificationsService {
             title: `حان الآن موعد صلاة ${prayerName}`,
             body: verseText,
             schedule: { at: prayerTime },
-            sound: 'azan.wav',
-            channelId: 'azan_channel',
+            sound: config.sound,
+            channelId: config.channelId,
             actionTypeId: 'PRAYER_TIME',
+            ...config.extra,
           }
         ]
       });
@@ -186,6 +292,43 @@ export class PrayerNotificationsService {
       });
     } catch (e) {
       console.warn("Failed to schedule Surah Al-Baqarah reminder:", e);
+    }
+  }
+
+  /**
+   * 8. جدولة إشعار للأوقات الثانوية (الضحى، منتصف الليل، الثلث الأخير)
+   */
+  static async scheduleSecondaryPrayerNotification(
+    prayerId: PrayerSettingsId,
+    prayerName: string,
+    prayerTime: Date,
+    prefs: AllPrayersPreferences
+  ) {
+    if (!this.isSupported()) return;
+
+    const pref = prefs[prayerId];
+    if (!pref || !pref.enabled) return;
+    if (prayerTime.getTime() <= Date.now()) return;
+
+    const config = this.resolveNotificationConfig(pref.mode, pref.enabled);
+
+    try {
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: Math.floor(Math.random() * 1000000),
+            title: `حان الآن وقت ${prayerName}`,
+            body: `حان الآن وقت ${prayerName}. تقبل الله طاعاتكم.`,
+            schedule: { at: prayerTime },
+            sound: config.sound,
+            channelId: config.channelId,
+            actionTypeId: 'SPIRITUAL_REMINDER',
+            ...config.extra,
+          }
+        ]
+      });
+    } catch (e) {
+      console.warn(`Failed to schedule ${prayerName} notification:`, e);
     }
   }
 }
