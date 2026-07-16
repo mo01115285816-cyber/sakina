@@ -4,28 +4,31 @@ import { MushafLayoutService } from './MushafLayoutService';
 const DB_VERSION_KEY = 'quran_db_version';
 const DB_VERSION = 'v3_mushaf_layout';
 
-export const QuranOfflineService = {
-  tafsirStore: localforage.createInstance({
-    name: 'quran_db',
-    storeName: 'tafsirs',
-    description: 'Offline Tafsir Pages',
-  }),
+const tafsirStore = localforage.createInstance({
+  name: 'quran_db',
+  storeName: 'tafsirs',
+  description: 'Offline Tafsir Pages',
+});
 
-  metaStore: localforage.createInstance({
-    name: 'quran_db',
-    storeName: 'meta',
-    description: 'Quran DB metadata',
-  }),
+const metaStore = localforage.createInstance({
+  name: 'quran_db',
+  storeName: 'meta',
+  description: 'Quran DB metadata',
+});
+
+export const QuranOfflineService = {
+  tafsirStore,
+  metaStore,
 
   async isDownloaded(): Promise<boolean> {
-    const version = await this.metaStore.getItem<string>(DB_VERSION_KEY);
+    const version = await metaStore.getItem<string>(DB_VERSION_KEY);
     if (version !== DB_VERSION) {
-      await this.clearQuran();
+      await QuranOfflineService.clearQuran();
       return false;
     }
     const mushafReady = await MushafLayoutService.isDownloaded();
     if (!mushafReady) return false;
-    const tafsirsCount = await this.tafsirStore.length();
+    const tafsirsCount = await tafsirStore.length();
     return tafsirsCount >= 604;
   },
 
@@ -36,7 +39,7 @@ export const QuranOfflineService = {
   },
 
   async getTafsirPage(pageNumber: number): Promise<any[] | null> {
-    return await this.tafsirStore.getItem<any[]>(`tafsir_${pageNumber}`);
+    return await tafsirStore.getItem<any[]>(`tafsir_${pageNumber}`);
   },
 
   async downloadQuran(onProgress: (percent: number, statusText: string) => void): Promise<void> {
@@ -57,7 +60,7 @@ export const QuranOfflineService = {
         const tafsirRes = await fetch(`https://api.quran.com/api/v4/tafsirs/16/by_page/${pageNumber}`);
         if (!tafsirRes.ok) throw new Error(`HTTP Tafsir:${tafsirRes.status}`);
         const tafsirData = await tafsirRes.json();
-        await this.tafsirStore.setItem(`tafsir_${pageNumber}`, tafsirData.tafsirs);
+        await tafsirStore.setItem(`tafsir_${pageNumber}`, tafsirData.tafsirs);
       } catch (err) {
         if (retries > 0) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -89,13 +92,13 @@ export const QuranOfflineService = {
       onProgress(overallPercent, statusText);
     }
 
-    await this.metaStore.setItem(DB_VERSION_KEY, DB_VERSION);
+    await metaStore.setItem(DB_VERSION_KEY, DB_VERSION);
   },
 
   async clearQuran(): Promise<void> {
     await Promise.all([
-      this.tafsirStore.clear(),
-      this.metaStore.clear(),
+      tafsirStore.clear(),
+      metaStore.clear(),
       MushafLayoutService.clearAll(),
     ]);
   }

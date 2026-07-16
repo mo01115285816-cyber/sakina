@@ -147,7 +147,7 @@ export default function QuranReaderScreen({
   };
 
   const pageTransition = {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 400,
     damping: 38,
     mass: 1,
@@ -172,6 +172,7 @@ export default function QuranReaderScreen({
   const [playingVerseKey, setPlayingVerseKey] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playMode, setPlayMode] = useState<'single' | 'page' | 'continuous'>('continuous');
+  const isNotContinuousMode = playMode !== 'continuous';
   const [repeatSettings, setRepeatSettings] = useState({ count: 1, current: 0 });
   const [showAudioSettings, setShowAudioSettings] = useState(false);
   const [showReciterModal, setShowReciterModal] = useState(false);
@@ -745,12 +746,12 @@ export default function QuranReaderScreen({
             {/* Settings Button */}
             <button
               onClick={() => setShowAudioSettings(!showAudioSettings)}
-              className={`flex items-center gap-1.5 transition-colors hover:opacity-70 ${playMode !== 'continuous' ? activeTheme.accent : activeTheme.text}`}
+              className={`flex items-center gap-1.5 transition-colors hover:opacity-70 ${isNotContinuousMode ? activeTheme.accent : activeTheme.text}`}
               title="إعدادات التكرار"
             >
               <div className="relative">
                 <Settings size={22} />
-                {playMode !== 'continuous' && (
+                {isNotContinuousMode && (
                   <span className={`absolute -top-1.5 -right-1.5 text-[9px] font-bold text-white w-4 h-4 rounded-full flex items-center justify-center border border-white ${activeTheme.accent.replace('text-', 'bg-')}`}>
                     {repeatSettings.count}
                   </span>
@@ -806,7 +807,7 @@ export default function QuranReaderScreen({
               </div>
 
               {/* Repeat Count */}
-              {playMode !== 'continuous' && (
+              {isNotContinuousMode && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}

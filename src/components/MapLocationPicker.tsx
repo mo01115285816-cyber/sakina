@@ -64,7 +64,7 @@ export default function MapLocationPicker({ initialLat, initialLon, onSelect, on
   const [hasSearched, setHasSearched] = useState(false);
   const [locationName, setLocationName] = useState('جاري التحديد...');
 
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const reverseGeocode = useCallback(async (lat: number, lon: number) => {
     try {

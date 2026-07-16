@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 const FONTS_DIR_NAME = 'qcf-fonts';
 const EXTRACTION_FLAG_KEY = 'qcf_fonts_extracted_v1';
@@ -77,7 +77,11 @@ export const QcfFontStorage = {
     onProgress?.(5, 'تجهيز ملف الخطوط...');
 
     // Step 1: Ensure the qcf-fonts directory exists in Data directory
-    const dataDir = await Filesystem.getDataDirectory();
+    const dataDirResult = await Filesystem.getUri({
+      path: '',
+      directory: Directory.Data,
+    });
+    const dataDir = dataDirResult.uri;
     const targetDir = `${dataDir}/${FONTS_DIR_NAME}`;
 
     try {
@@ -108,7 +112,6 @@ export const QcfFontStorage = {
         path: zipTempPath,
         data: zipBase64,
         directory: Directory.Data,
-        encoding: Encoding.Base64,
         recursive: true,
       });
     } catch (err) {

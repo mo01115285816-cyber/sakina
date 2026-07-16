@@ -1,5 +1,3 @@
-import { HadithItem } from "../types/hadith"; // Wait, I will just export the type within the file like it currently does.
-
 export type HadithItem = {
   id: number;
   text: string;

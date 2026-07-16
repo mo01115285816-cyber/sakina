@@ -28,31 +28,34 @@ export interface MushafPage {
 const DB_VERSION_KEY = 'mushaf_layout_version';
 const DB_VERSION = 'v1_zonetecde';
 
-export const MushafLayoutService = {
-  store: localforage.createInstance({
-    name: 'mushaf_layout_db',
-    storeName: 'pages',
-    description: 'Zonetecde Mushaf Layout Dataset',
-  }),
+const store = localforage.createInstance({
+  name: 'mushaf_layout_db',
+  storeName: 'pages',
+  description: 'Zonetecde Mushaf Layout Dataset',
+});
 
-  metaStore: localforage.createInstance({
-    name: 'mushaf_layout_db',
-    storeName: 'meta',
-    description: 'Mushaf Layout metadata',
-  }),
+const metaStore = localforage.createInstance({
+  name: 'mushaf_layout_db',
+  storeName: 'meta',
+  description: 'Mushaf Layout metadata',
+});
+
+export const MushafLayoutService = {
+  store,
+  metaStore,
 
   async isDownloaded(): Promise<boolean> {
-    const version = await this.metaStore.getItem<string>(DB_VERSION_KEY);
+    const version = await metaStore.getItem<string>(DB_VERSION_KEY);
     if (version !== DB_VERSION) {
-      await this.clearAll();
+      await MushafLayoutService.clearAll();
       return false;
     }
-    const count = await this.store.length();
+    const count = await store.length();
     return count >= 604;
   },
 
   async getPage(pageNumber: number): Promise<MushafPage | null> {
-    return await this.store.getItem<MushafPage>(`page_${pageNumber}`);
+    return await store.getItem<MushafPage>(`page_${pageNumber}`);
   },
 
   async downloadAll(onProgress?: (percent: number, status: string) => void): Promise<void> {
@@ -63,7 +66,7 @@ export const MushafLayoutService = {
       const batch: Promise<void>[] = [];
       for (let j = 0; j < 10 && i + j <= totalPages; j++) {
         const pageNum = i + j;
-        batch.push(this.downloadPage(pageNum));
+        batch.push(MushafLayoutService.downloadPage(pageNum));
       }
       await Promise.all(batch);
       downloaded += batch.length;
@@ -75,11 +78,11 @@ export const MushafLayoutService = {
       onProgress?.(percent, status);
     }
 
-    await this.metaStore.setItem(DB_VERSION_KEY, DB_VERSION);
+    await metaStore.setItem(DB_VERSION_KEY, DB_VERSION);
   },
 
   async downloadPage(pageNumber: number): Promise<void> {
-    const existing = await this.store.getItem<MushafPage>(`page_${pageNumber}`);
+    const existing = await store.getItem<MushafPage>(`page_${pageNumber}`);
     if (existing) return;
 
     const padded = String(pageNumber).padStart(3, '0');
@@ -89,13 +92,13 @@ export const MushafLayoutService = {
       throw new Error(`HTTP ${response.status} for page ${pageNumber}`);
     }
     const data: MushafPage = await response.json();
-    await this.store.setItem(`page_${pageNumber}`, data);
+    await store.setItem(`page_${pageNumber}`, data);
   },
 
   async clearAll(): Promise<void> {
     await Promise.all([
-      this.store.clear(),
-      this.metaStore.clear(),
+      store.clear(),
+      metaStore.clear(),
     ]);
   },
 };

@@ -150,7 +150,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
                 className="cursor-pointer group flex flex-col items-center w-full"
               >
                 <span className="text-[40px] font-black text-white mb-3 group-active:scale-95 transition-transform drop-shadow-[0_2px_12px_rgba(0,0,0,0.1)] leading-tight">{nameOfTheDay.name}</span>
-                <p className="text-[13.5px] font-medium text-white/90 leading-relaxed max-w-[90%] mb-5 text-center">{nameOfTheDay.meaning}</p>
+                <p className="text-[13.5px] font-medium text-white/90 leading-relaxed max-w-[90%] mb-5 text-center">{nameOfTheDay.translation}</p>
                 
                 <div className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-white/15 border border-white/20 text-[12px] font-bold text-white group-hover:bg-white/25 transition-all shadow-sm">
                   <span>تأمل في معاني الاسم</span>
