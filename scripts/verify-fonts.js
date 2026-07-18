@@ -1,14 +1,28 @@
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
+
+/**
+ * QCF Font Verification Script — Remote-First Architecture
+ *
+ * In the new architecture, QCF fonts (604 pages) are stored on GitHub Releases CDN
+ * and downloaded at runtime. Only sample fonts (p001, p002) are kept locally for
+ * development. This script verifies:
+ *   1. Sample fonts (p001, p002) exist locally and are valid woff2
+ *   2. sura_names.woff2 exists and is valid
+ *   3. GitHub Releases CDN is reachable (optional, non-blocking)
+ */
 
 const FONTS_DIR = path.join(process.cwd(), 'public', 'fonts', 'qcf');
 const SURA_NAMES_PATH = path.join(process.cwd(), 'public', 'fonts', 'sura_names.woff2');
-const TOTAL_PAGES = 604;
+const SAMPLE_FONT_PAGES = [1, 2]; // Only these are kept locally for dev
 const MIN_FONT_SIZE = 30000;
 const MIN_SURA_SIZE = 50000;
 const WOFF2_MAGIC = [0x77, 0x4F, 0x46, 0x32]; // wOF2
+const CDN_RELEASE_URL = 'https://github.com/mo01115285816-cyber/sakina/releases/download/v1.0.0-mushaf-fonts/qcf-fonts.zip';
 
 const errors = [];
+const warnings = [];
 
 function checkWoff2(filePath, minSize) {
   const stat = fs.statSync(filePath);
@@ -25,12 +39,13 @@ function checkWoff2(filePath, minSize) {
   return null;
 }
 
-for (let i = 1; i <= TOTAL_PAGES; i++) {
-  const num = String(i).padStart(3, '0');
+// Check sample fonts that are kept locally for development
+for (const page of SAMPLE_FONT_PAGES) {
+  const num = String(page).padStart(3, '0');
   const filePath = path.join(FONTS_DIR, `p${num}.woff2`);
 
   if (!fs.existsSync(filePath)) {
-    errors.push(`missing: p${num}.woff2`);
+    errors.push(`missing sample: p${num}.woff2 (required for local dev)`);
     continue;
   }
 
@@ -40,6 +55,7 @@ for (let i = 1; i <= TOTAL_PAGES; i++) {
   }
 }
 
+// Check sura_names.woff2
 if (!fs.existsSync(SURA_NAMES_PATH)) {
   errors.push('missing: sura_names.woff2');
 } else {
@@ -49,18 +65,43 @@ if (!fs.existsSync(SURA_NAMES_PATH)) {
   }
 }
 
+// Check that fonts directory exists
+if (!fs.existsSync(FONTS_DIR)) {
+  errors.push('missing: public/fonts/qcf/ directory');
+}
+
+// Optional: Verify CDN accessibility (non-blocking warning)
+console.log('Checking GitHub Releases CDN accessibility...');
+try {
+  // Just do a HEAD request to verify the release asset exists
+  const result = execSync(`curl -sI -o /dev/null -w "%{http_code}" "${CDN_RELEASE_URL}"`, {
+    timeout: 15000,
+    encoding: 'utf-8'
+  }).trim();
+
+  if (result === '200' || result === '302') {
+    console.log('  CDN: accessible (HTTP ' + result + ')');
+  } else {
+    warnings.push(`CDN returned HTTP ${result} — fonts may not be downloadable at runtime`);
+  }
+} catch {
+  warnings.push('Could not verify CDN accessibility (network issue or curl unavailable)');
+}
+
 if (errors.length > 0) {
   console.error('FAILED: font verification errors:');
   errors.forEach(e => console.error(`  - ${e}`));
-  console.error(`\nTotal errors: ${errors.length}`);
+  if (warnings.length > 0) {
+    console.error('\nWarnings:');
+    warnings.forEach(w => console.error(`  ⚠ ${w}`));
+  }
   process.exit(1);
 } else {
-  const totalSize = [...Array(TOTAL_PAGES).keys()].reduce((acc, i) => {
-    const f = path.join(FONTS_DIR, `p${String(i + 1).padStart(3, '0')}.woff2`);
-    return acc + fs.statSync(f).size;
-  }, 0);
-  const suraSize = fs.statSync(SURA_NAMES_PATH).size;
-  console.log(`SUCCESS: all ${TOTAL_PAGES} QCF fonts + sura_names.woff2 are valid`);
-  console.log(`  QCF total: ${(totalSize / 1024 / 1024).toFixed(2)} MB (${(totalSize / TOTAL_PAGES / 1024).toFixed(1)} KB avg)`);
-  console.log(`  SuraNames: ${(suraSize / 1024).toFixed(1)} KB`);
+  console.log(`SUCCESS: sample QCF fonts (p001, p002) + sura_names.woff2 are valid`);
+  console.log(`  Architecture: Remote-First (604 fonts served via GitHub Releases CDN)`);
+  console.log(`  CDN URL: ${CDN_RELEASE_URL}`);
+  if (warnings.length > 0) {
+    console.log('\nWarnings:');
+    warnings.forEach(w => console.log(`  ⚠ ${w}`));
+  }
 }

@@ -3,34 +3,26 @@ import { QcfFontStorage } from '@/services/QcfFontStorage';
 
 const loadedFonts = new Map<string, string>();
 
-function fontId(pageNumber: number): string {
-  return `QCF_P${String(pageNumber).padStart(3, '0')}`;
-}
-
-async function loadFont(pageNumber: number): Promise<void> {
-  const fontFamily = fontId(pageNumber);
-  if (loadedFonts.has(fontFamily)) return;
-
-  const url = await QcfFontStorage.readFontAsBlobUrl(pageNumber);
-
-  const fontFace = new FontFace(fontFamily, `url(${url}) format('woff2')`, {
-    display: 'block',
-  });
-
-  const loaded = await fontFace.load();
-  document.fonts.add(loaded);
-  loadedFonts.set(fontFamily, url);
+export function prefetchQcfFont(pageNumber: number): void {
+  const family = QcfFontStorage.fontId(pageNumber);
+  if (loadedFonts.has(family)) return;
+  QcfFontStorage.readFontAsBlobUrl(pageNumber)
+    .then((url) => {
+      const fontFace = new FontFace(family, `url(${url}) format('woff2')`, { display: 'block' });
+      fontFace.load().then((loaded) => {
+        document.fonts.add(loaded);
+        loadedFonts.set(family, url);
+      });
+    })
+    .catch(() => {});
 }
 
 export function useQcfFont(pageNumber: number): boolean {
-  const fontFamily = pageNumber >= 1 && pageNumber <= 604 ? fontId(pageNumber) : null;
-  const [isLoaded, setIsLoaded] = useState<boolean>(
-    () => (fontFamily ? loadedFonts.has(fontFamily) : false)
-  );
+  const fontFamily = pageNumber >= 1 && pageNumber <= 604 ? QcfFontStorage.fontId(pageNumber) : null;
+  const [isLoaded, setIsLoaded] = useState<boolean>(() => (fontFamily ? loadedFonts.has(fontFamily) : false));
 
   useEffect(() => {
     if (!fontFamily) return;
-
     if (loadedFonts.has(fontFamily)) {
       setIsLoaded(true);
       return;
@@ -39,37 +31,29 @@ export function useQcfFont(pageNumber: number): boolean {
     let cancelled = false;
     setIsLoaded(false);
 
-    loadFont(pageNumber)
-      .then(() => {
+    QcfFontStorage.readFontAsBlobUrl(pageNumber)
+      .then(async (url) => {
+        const fontFace = new FontFace(fontFamily, `url(${url}) format('woff2')`, { display: 'block' });
+        const loaded = await fontFace.load();
+        document.fonts.add(loaded);
+        loadedFonts.set(fontFamily, url);
         if (!cancelled) setIsLoaded(true);
       })
       .catch((err) => {
-        if (!cancelled) {
-          console.error(`Failed to load QCF font for page ${pageNumber}:`, err);
-        }
+        if (!cancelled) console.error(`فشل جلب أو تركيب خط الصفحة ${pageNumber}:`, err);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [fontFamily, pageNumber]);
+  }, [pageNumber, fontFamily]);
 
   return isLoaded;
 }
 
-export function prefetchQcfFont(pageNumber: number): void {
-  if (!pageNumber || pageNumber < 1 || pageNumber > 604) return;
-  const fontFamily = fontId(pageNumber);
-  if (loadedFonts.has(fontFamily)) return;
-
-  loadFont(pageNumber).catch((err) => {
-    console.error(`Prefetch failed for QCF page ${pageNumber}:`, err);
-  });
-}
-
 export function isQcfFontLoaded(pageNumber: number): boolean {
   if (!pageNumber || pageNumber < 1 || pageNumber > 604) return false;
-  return loadedFonts.has(fontId(pageNumber));
+  return loadedFonts.has(QcfFontStorage.fontId(pageNumber));
 }
 
 export function areFontsExtracted(): Promise<boolean> {

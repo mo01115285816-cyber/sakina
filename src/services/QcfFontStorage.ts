@@ -1,9 +1,11 @@
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import localforage from 'localforage';
 
 const FONTS_DIR_NAME = 'qcf-fonts';
 const EXTRACTION_FLAG_KEY = 'qcf_fonts_extracted_v1';
-const ZIP_SOURCE_URL = '/fonts/qcf-fonts.zip';
+const REMOTE_ZIP_URL = 'https://github.com/mo01115285816-cyber/sakina/releases/download/v1.0.0-mushaf-fonts/qcf-fonts.zip';
+const RAW_FONT_BASE_URL = 'https://raw.githubusercontent.com/mo01115285816-cyber/sakina/main/public/fonts/qcf';
 
 type Platform = 'web' | 'native';
 
@@ -15,10 +17,7 @@ function getPlatform(): Platform {
   }
 }
 
-// Lazy-load the Zip plugin only on native platforms to avoid web import errors.
-// The package exports `CapacitorZip` (not `Zip`), and its web implementation
-// triggers browser downloads (not suitable for our use case), so we only
-// invoke it on native platforms.
+// Lazy-load the Zip plugin only on native platforms to avoid Vite web bundle errors
 async function getZipPlugin(): Promise<any> {
   const moduleName = '@capgo/capacitor-zip';
   // Use indirect dynamic import to prevent Vite from pre-bundling this
@@ -26,6 +25,13 @@ async function getZipPlugin(): Promise<any> {
   const mod = await (Function('m', 'return import(m)')(moduleName));
   return mod.CapacitorZip;
 }
+
+// Create a dedicated IndexedDB store for permanent offline font caching on Web (PWA)
+const webFontStore = localforage.createInstance({
+  name: 'sakina_quran_fonts',
+  storeName: 'qcf_fonts_store',
+  description: 'Permanent Offline QCF v2 Mushaf Fonts for Web PWA',
+});
 
 function fontFileName(pageNumber: number): string {
   return `p${String(pageNumber).padStart(3, '0')}.woff2`;
@@ -35,23 +41,37 @@ function fontId(pageNumber: number): string {
   return `QCF_P${String(pageNumber).padStart(3, '0')}`;
 }
 
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode.apply(null, Array.from(chunk) as unknown as number[]);
+  }
+  return btoa(binary);
+}
+
 export const QcfFontStorage = {
   getPlatform,
 
   async isExtracted(): Promise<boolean> {
-    if (getPlatform() !== 'native') return false;
+    if (getPlatform() !== 'native') {
+      // On Web PWA: check dynamic storage in IndexedDB per-page on read
+      return true;
+    }
     try {
       const flag = localStorage.getItem(EXTRACTION_FLAG_KEY);
       if (flag !== 'true') return false;
 
-      // Double-check by verifying a sample font file exists
+      // Physical integrity check for page 1 font file in device storage
       const samplePath = `${FONTS_DIR_NAME}/${fontFileName(1)}`;
       try {
-        await Filesystem.stat({
+        const stat = await Filesystem.stat({
           path: samplePath,
           directory: Directory.Data,
         });
-        return true;
+        return stat.size >= 30000;
       } catch {
         localStorage.removeItem(EXTRACTION_FLAG_KEY);
         return false;
@@ -65,24 +85,16 @@ export const QcfFontStorage = {
     onProgress?: (percent: number, status: string) => void
   ): Promise<void> {
     if (getPlatform() !== 'native') {
-      // Web platform: no extraction needed, fonts read directly from assets
+      onProgress?.(100, 'الخطوط جاهزة للعمل على متصفح الويب');
       return;
     }
 
     if (await this.isExtracted()) {
-      onProgress?.(100, 'الخطوط جاهزة');
+      onProgress?.(100, 'خطوط المصحف جاهزة ومخزنة في ذاكرة الهاتف');
       return;
     }
 
-    onProgress?.(5, 'تجهيز ملف الخطوط...');
-
-    // Step 1: Ensure the qcf-fonts directory exists in Data directory
-    const dataDirResult = await Filesystem.getUri({
-      path: '',
-      directory: Directory.Data,
-    });
-    const dataDir = dataDirResult.uri;
-    const targetDir = `${dataDir}/${FONTS_DIR_NAME}`;
+    onProgress?.(5, 'جاري الاتصال بالخادم السحابي لخطوط المصحف الشريف...');
 
     try {
       await Filesystem.mkdir({
@@ -91,22 +103,56 @@ export const QcfFontStorage = {
         recursive: true,
       });
     } catch {
-      // Directory may already exist, ignore
+      // Directory may already exist
     }
 
-    onProgress?.(15, 'نسخ ملف الخطوط...');
-
-    // Step 2: Copy zip from assets to a temp location in Data directory
     const zipTempPath = 'qcf-fonts.zip';
+
     try {
-      // Read the zip from public assets (Capacitor serves public/ at root)
-      const response = await fetch(ZIP_SOURCE_URL);
+      onProgress?.(15, 'جاري تنزيل حزمة خطوط المصحف الشريف (97 ميجابايت)...');
+
+      // Fetch the compressed package directly from GitHub Releases CDN
+      const response = await fetch(REMOTE_ZIP_URL);
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status} fetching zip`);
+        throw new Error(`تعذر الاتصال بخادم الخطوط (HTTP ${response.status})`);
       }
-      const zipBlob = await response.blob();
-      const zipArrayBuffer = await zipBlob.arrayBuffer();
-      const zipBase64 = arrayBufferToBase64(zipArrayBuffer);
+
+      const contentLengthHeader = response.headers.get('content-length');
+      const totalBytes = contentLengthHeader ? parseInt(contentLengthHeader, 10) : 0;
+      let downloadedBytes = 0;
+
+      const reader = response.body?.getReader();
+      const chunks: Uint8Array[] = [];
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (value) {
+            chunks.push(value);
+            downloadedBytes += value.length;
+            if (totalBytes > 0) {
+              const fetchPercent = 15 + Math.floor((downloadedBytes / totalBytes) * 45); // 15% -> 60%
+              onProgress?.(fetchPercent, `تنزيل الخطوط: ${Math.round((downloadedBytes / 1024 / 1024) * 10) / 10} ميجا / ${Math.round((totalBytes / 1024 / 1024) * 10) / 10} ميجا...`);
+            }
+          }
+        }
+      } else {
+        const blob = await response.blob();
+        chunks.push(new Uint8Array(await blob.arrayBuffer()));
+      }
+
+      onProgress?.(65, 'جاري حفظ الحزمة المضغوطة في ذاكرة الهاتف الدائمة...');
+
+      const totalLength = chunks.reduce((acc, c) => acc + c.length, 0);
+      const combinedBuffer = new Uint8Array(totalLength);
+      let offset = 0;
+      for (const c of chunks) {
+        combinedBuffer.set(c, offset);
+        offset += c.length;
+      }
+
+      const zipBase64 = arrayBufferToBase64(combinedBuffer.buffer);
 
       await Filesystem.writeFile({
         path: zipTempPath,
@@ -114,88 +160,85 @@ export const QcfFontStorage = {
         directory: Directory.Data,
         recursive: true,
       });
-    } catch (err) {
-      throw new Error(`فشل نسخ ملف الخطوط: ${err instanceof Error ? err.message : String(err)}`);
-    }
 
-    onProgress?.(40, 'جاري فك الضغط...');
+      onProgress?.(75, 'جاري فك ضغط وتجهيز 604 صفحة للمصحف الشريف...');
 
-    // Step 3: Unzip using @capgo/capacitor-zip (native only, lazy-loaded)
-    try {
+      // Unzip in Directory.Data on Android and iOS
       const Zip = await getZipPlugin();
       const zipFileUri = await Filesystem.getUri({
         path: zipTempPath,
         directory: Directory.Data,
       });
+      const targetDirUri = await Filesystem.getUri({
+        path: FONTS_DIR_NAME,
+        directory: Directory.Data,
+      });
 
       await Zip.unzip({
         source: zipFileUri.uri,
-        destination: targetDir,
+        destination: targetDirUri.uri,
       });
-    } catch (err) {
-      throw new Error(`فشل فك الضغط: ${err instanceof Error ? err.message : String(err)}`);
-    }
 
-    onProgress?.(85, 'التحقق من سلامة الخطوط...');
+      onProgress?.(92, 'التحقق من سلامة جودة الحروف وعلامات التجويد...');
 
-    // Step 4: Verify a sample font to ensure extraction succeeded
-    try {
+      // Strict verification: ensure extracted files are not corrupted
       const sampleStat = await Filesystem.stat({
         path: `${FONTS_DIR_NAME}/${fontFileName(1)}`,
         directory: Directory.Data,
       });
       if (sampleStat.size < 30000) {
-        throw new Error(`ملف الخط المستخرج تالف: ${sampleStat.size} بايت`);
+        throw new Error(`ملف الخط المستخرج غير مكتمل أو تالف (${sampleStat.size} بايت)`);
       }
+
+      onProgress?.(97, 'جاري تنظيف الملفات المؤقتة لتوفير مساحة الهاتف...');
+      try {
+        await Filesystem.deleteFile({
+          path: zipTempPath,
+          directory: Directory.Data,
+        });
+      } catch {
+        // Ignore non-critical cleanup errors
+      }
+
+      localStorage.setItem(EXTRACTION_FLAG_KEY, 'true');
+      onProgress?.(100, 'اكتمل تنزيل وتجهيز خطوط المصحف بنجاح');
+
     } catch (err) {
-      throw new Error(`فشل التحقق من الخطوط المستخرجة: ${err instanceof Error ? err.message : String(err)}`);
+      // Automatic reverse cleanup on network failure or error
+      try {
+        await Filesystem.deleteFile({ path: zipTempPath, directory: Directory.Data });
+      } catch {}
+      try {
+        await Filesystem.rmdir({ path: FONTS_DIR_NAME, directory: Directory.Data, recursive: true });
+      } catch {}
+      localStorage.removeItem(EXTRACTION_FLAG_KEY);
+      throw new Error(`فشل تنزيل وتجهيز خطوط المصحف: ${err instanceof Error ? err.message : String(err)}`);
     }
-
-    onProgress?.(95, 'تنظيف الملفات المؤقتة...');
-
-    // Step 5: Clean up the zip file
-    try {
-      await Filesystem.deleteFile({
-        path: zipTempPath,
-        directory: Directory.Data,
-      });
-    } catch {
-      // Non-critical, ignore
-    }
-
-    // Step 6: Mark extraction as complete
-    localStorage.setItem(EXTRACTION_FLAG_KEY, 'true');
-
-    onProgress?.(100, 'اكتمل تجهيز الخطوط');
   },
 
   async clearExtractedFonts(): Promise<void> {
-    if (getPlatform() !== 'native') return;
-    try {
-      await Filesystem.rmdir({
-        path: FONTS_DIR_NAME,
-        directory: Directory.Data,
-        recursive: true,
-      });
-    } catch {
-      // ignore
+    if (getPlatform() === 'native') {
+      try {
+        await Filesystem.rmdir({ path: FONTS_DIR_NAME, directory: Directory.Data, recursive: true });
+      } catch {}
+      localStorage.removeItem(EXTRACTION_FLAG_KEY);
+    } else {
+      await webFontStore.clear();
     }
-    localStorage.removeItem(EXTRACTION_FLAG_KEY);
   },
 
   async readFontAsBlobUrl(pageNumber: number): Promise<string> {
     const platform = getPlatform();
+    const fileName = fontFileName(pageNumber);
 
     if (platform === 'native') {
-      // Read from Filesystem
-      const filePath = `${FONTS_DIR_NAME}/${fontFileName(pageNumber)}`;
+      // Fast direct read from device internal permanent storage (Capacitor Data Directory)
+      const filePath = `${FONTS_DIR_NAME}/${fileName}`;
       try {
         const result = await Filesystem.readFile({
           path: filePath,
           directory: Directory.Data,
         });
-
-        // result.data is a base64 string on native
         const byteCharacters = atob(result.data as string);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
@@ -205,26 +248,43 @@ export const QcfFontStorage = {
         const blob = new Blob([byteArray], { type: 'font/woff2' });
         return URL.createObjectURL(blob);
       } catch (err) {
-        throw new Error(`فشل قراءة خط الصفحة ${pageNumber} من الذاكرة: ${err instanceof Error ? err.message : String(err)}`);
+        throw new Error(`تعذر قراءة خط الصفحة ${pageNumber} من ذاكرة الهاتف`);
       }
     }
 
-    // Web: fetch directly from assets (woff2 already optimized, browser caches it)
-    const url = `/fonts/qcf/${fontFileName(pageNumber)}`;
-    return url;
+    // On Web PWA: check IndexedDB permanent storage first
+    try {
+      const cachedBuffer = await webFontStore.getItem<ArrayBuffer>(fileName);
+      if (cachedBuffer) {
+        const blob = new Blob([cachedBuffer], { type: 'font/woff2' });
+        return URL.createObjectURL(blob);
+      }
+
+      // If not cached, fetch from server and store in IndexedDB for permanent offline use
+      const fetchUrls = [
+        `/fonts/qcf/${fileName}`, // Local dev build check
+        `${RAW_FONT_BASE_URL}/${fileName}` // Cloud fetch from GitHub CDN
+      ];
+
+      for (const url of fetchUrls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            const buffer = await res.arrayBuffer();
+            if (buffer.byteLength >= 30000) {
+              await webFontStore.setItem(fileName, buffer);
+              const blob = new Blob([buffer], { type: 'font/woff2' });
+              return URL.createObjectURL(blob);
+            }
+          }
+        } catch {}
+      }
+      throw new Error(`فشل جلب خط الصفحة ${pageNumber} من الخادم السحابي`);
+    } catch (err) {
+      throw new Error(`خطأ في تهيئة خط الصفحة ${pageNumber}: ${err instanceof Error ? err.message : String(err)}`);
+    }
   },
 
   fontId,
   fontFileName,
 };
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  const chunkSize = 8192;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    const chunk = bytes.subarray(i, i + chunkSize);
-    binary += String.fromCharCode.apply(null, Array.from(chunk) as unknown as number[]);
-  }
-  return btoa(binary);
-}
