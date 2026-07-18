@@ -1,12 +1,44 @@
+/* ═══════════════════════════════════════════════════════════════
+   القاعدة #2: @import دائماً أولاً — قبل أي rule آخر
+   القاعدة #3: Tailwind v3 directives (ليس @import "tailwindcss" من v4)
+   القاعدة #5: لا Safe Area padding مع Immersive Mode
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Google Fonts CDN — يجب أن يكون قبل Tailwind directives */
 @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap");
 
-@import "tailwindcss";
+/* Tailwind v3 directives — لا تستخدم @import "tailwindcss" (هذا لـ v4) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   بعد ذلك: @font-face + custom CSS + global styles
+   ═══════════════════════════════════════════════════════════════ */
 
 :root {
   font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
   --top-space: 72px;
   --side-space: 48px;
   --bottom-space: 90px;
+}
+
+/* --- Safe Area ---
+   NOTE: This app uses Immersive Mode (status bar + navigation bar completely hidden
+   via MainActivity.java). Therefore NO Safe Area padding should be applied to <html>
+   or any element — otherwise a colored bar appears at the top/bottom of the screen.
+   The --safe-area-inset-* variables and .pt-safe/.pb-safe utilities are intentionally
+   DISABLED here. Do NOT re-enable them unless Immersive Mode is removed. */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* html has NO padding — content starts from the very top edge of the screen */
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .mushaf-page {
@@ -137,24 +169,23 @@
 }
 
 .qcf-line {
-  font-size: clamp(18px, 4.2vw, 30px);  /* ✅ أصغر — الكلمات تدخل في العرض */
+  font-size: clamp(18px, 4.2vw, 30px);
   line-height: 1.85;
   text-align: center;
   direction: rtl;
-  white-space: nowrap;  /* ✅ نحافظ عليه — 15 سطر بالظبط */
+  white-space: nowrap;
   letter-spacing: 0;
   word-spacing: 0;
 }
 
 .qcf-line.qcf-justify {
   text-align: justify;
-  text-align-last: center;  /* ✅ المشكلة #4 */
-  white-space: nowrap;  /* ✅ نرجّع nowrap — 15 سطر بالظبط */
+  text-align-last: center;
+  white-space: nowrap;
 }
 
 .qcf-word {
-  display: inline;  /* ✅ المشكلة #3 */
-  /* ❌ لا padding — المشكلة #6 */
+  display: inline;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
   border-radius: 3px;
@@ -238,9 +269,6 @@
 }
 
 /* ===== Quran Title (for circles, headers, decorative titles) ===== */
-/* Uses Amiri Quran — official-style Naskh calligraphy font for Quran titles.
-   Not a QCF glyph font (QCF only has verse words). This gives authentic
-   Quranic appearance for the "القرآن الكريم" title in UI elements. */
 .quran-title {
   font-family: 'Amiri Quran', 'Amiri', serif;
   direction: rtl;

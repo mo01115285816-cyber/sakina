@@ -2,11 +2,15 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.sakeenah.app',
-  appName: 'سَكِينَة - Sakeenah AI',
+  appName: 'سكينة',  // الاسم الخارجي فقط — سكينة
   webDir: 'dist',
   server: {
     androidScheme: 'https',
     cleartext: true,
+  },
+  android: {
+    // القاعدة #7: السماح بـ mixed content (HTTPS→HTTP redirect للبث)
+    allowMixedContent: true,
   },
   plugins: {
     LocalNotifications: {
@@ -14,6 +18,8 @@ const config: CapacitorConfig = {
       iconColor: '#b88a4f',
       sound: 'azan.wav',
     },
+    // القاعدة #4: لا تضع SystemBars أو StatusBar هنا — ستتعارض مع Immersive Mode الأصلي
+    // MainActivity.java يهيمن على كل شيء عبر hideSystemBars()
   },
 };
 

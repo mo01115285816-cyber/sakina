@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">سَكِينَة - Sakeenah AI</string>
-    <string name="title_activity_main">سَكِينَة - Sakeenah AI</string>
+    <string name="app_name">سكينة</string>
+    <string name="title_activity_main">سكينة</string>
     <string name="package_name">com.sakeenah.app</string>
     <string name="custom_url_scheme">com.sakeenah.app</string>
 </resources>
