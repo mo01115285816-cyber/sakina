@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, startTransition, useMemo } from "react";
+import { Capacitor } from "@capacitor/core";
+import { GoogleGenAI } from "@google/genai";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Sparkles, Send, RefreshCw, ChevronRight, 
@@ -7,6 +9,40 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
+// Gemini API key — embedded for native APK (no Express server in Capacitor)
+const NATIVE_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
+
+// System prompt for Sakeenah AI — Islamic scholarly assistant
+const SAKEENAH_SYSTEM_PROMPT = `أنت "سكينة AI" — مساعد ذكي إسلامي متخصص. تجيب بدقة ومسؤولية من القرآن الكريم والكتب الستة في الحديث الشريف (البخاري، مسلم، الترمذي، النسائي، أبو داود، ابن ماجه). 
+
+قواعد صارمة:
+1. أجب دائماً باللغة العربية الفصحى
+2. استشهد بالآيات القرآنية والأحاديث النبوية مع ذكر المصدر
+3. إذا لم تكن متأكداً من إجابة، قل ذلك بوضوح ولا تخمن
+4. لا تُفتِ في مسائل خلافية بين المذاهب بل اعرض الآراء باختصار
+5. كن محترماً ورحيماً في الرد
+6. لا تناقش أي مواضيع سياسية أو مثيرة للجدل
+7. ركز على تيسير العبادة وتقريب العبد من ربه`;
+
+// Lazy-initialized Gemini client for native platform
+let nativeGeminiClient: GoogleGenAI | null = null;
+function getNativeGeminiClient(): GoogleGenAI | null {
+  if (!NATIVE_GEMINI_API_KEY) return null;
+  if (!nativeGeminiClient) {
+    nativeGeminiClient = new GoogleGenAI({ apiKey: NATIVE_GEMINI_API_KEY });
+  }
+  return nativeGeminiClient;
+}
+
+// Check if running on native platform (Capacitor APK)
+function isNativePlatform(): boolean {
+  try {
+    return Capacitor.isNativePlatform();
+  } catch {
+    return false;
+  }
+}
 
 type Message = {
   id: string;
@@ -414,7 +450,55 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack }:
         content: m.content
       }));
 
-      const res = await fetch("/api/sakeenah-ai/chat/stream", {
+      // Native platform (APK): Call Gemini API directly — no Express server
+      if (isNativePlatform() && getNativeGeminiClient()) {
+        const client = getNativeGeminiClient()!;
+        const aiMsg: Message = {
+          id: aiMsgId,
+          role: "assistant",
+          content: "",
+          timestamp: new Date(),
+          isNew: false,
+          isStreaming: true
+        };
+        setMessages((prev) => [...prev, aiMsg]);
+        setIsLoading(false);
+
+        const geminiContents = [
+          { role: "user" as const, parts: [{ text: SAKEENAH_SYSTEM_PROMPT }] },
+          { role: "model" as const, parts: [{ text: "فهمت. أنا سكينة AI، مساعدك الإسلامي المتخصص. كيف يمكنني مساعدتك؟" }] },
+          ...history.map((m) => ({
+            role: (m.role === "user" ? "user" : "model") as "user" | "model",
+            parts: [{ text: m.content }]
+          }))
+        ];
+
+        const response = await client.models.generateContentStream({
+          model: "gemini-2.0-flash",
+          contents: geminiContents,
+        });
+
+        let accumulatedContent = "";
+        for await (const chunk of response) {
+          const text = chunk.text || "";
+          if (text) {
+            accumulatedContent += text;
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === aiMsgId ? { ...msg, content: accumulatedContent } : msg
+              )
+            );
+          }
+        }
+
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === aiMsgId ? { ...msg, isStreaming: false } : msg
+          )
+        );
+      } else {
+        // Web platform: Use Express server SSE endpoint
+        const res = await fetch("/api/sakeenah-ai/chat/stream", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -488,6 +572,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack }:
           msg.id === aiMsgId ? { ...msg, isStreaming: false } : msg
         )
       );
+      } // end of else (web platform SSE)
 
     } catch (error) {
       console.error("Sakeenah AI error:", error);
@@ -528,14 +613,14 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack }:
   };
 
   return (
-    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-[Cairo] bg-[#ece7de] h-dvh relative flex flex-col overflow-hidden">
+    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-[Cairo] bg-[#ece7de] h-screen relative flex flex-col overflow-hidden">
       
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
 
       {/* ── FLOATING TOP HEADER ── */}
-      <div className="absolute top-6 left-5 right-5 flex items-center justify-between z-45 pointer-events-none">
+      <div className="absolute top-6 left-5 right-5 flex items-center justify-between z-[45] pointer-events-none">
         {/* Right Element (in RTL): Title Capsule */}
         <div className="h-10 px-5 rounded-full bg-[#fcfaf7]/85 backdrop-blur-md border border-[#e6dccf] shadow-[0_6px_20px_rgba(43,26,16,0.06),0_1px_3px_rgba(43,26,16,0.03)] text-[#2b1a10] flex items-center justify-center gap-1.5 pointer-events-auto transition-all duration-300">
           <Sparkles size={14} className="text-[#b88a4f] animate-pulse" fill="currentColor" />
@@ -575,7 +660,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack }:
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-[#ece7de]/85 backdrop-blur-md z-45 flex items-center justify-center p-5"
+              className="absolute inset-0 bg-[#ece7de]/85 backdrop-blur-md z-[45] flex items-center justify-center p-5"
             >
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -602,7 +687,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack }:
                   </p>
 
                   {/* Security badge — subtle, matches app palette */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#b88a4f]/8 border border-[#b88a4f]/15 rounded-full text-[11px] font-bold text-[#7f6a55] mb-5">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#b88a4f]/[0.08] border border-[#b88a4f]/15 rounded-full text-[11px] font-bold text-[#7f6a55] mb-5">
                     <ShieldCheck size={13} className="text-[#b88a4f]" />
                     <span>خصوصية تامة وسرية مشفرة بنسبة ١٠٠٪</span>
                   </div>

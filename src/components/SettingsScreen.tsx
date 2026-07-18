@@ -63,7 +63,7 @@ const Switch = React.memo(function Switch({
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className="relative w-10 h-5.5 rounded-full p-0.5 transition-colors duration-300 focus:outline-none flex items-center shadow-inner cursor-pointer"
+      className="relative w-10 h-[1.375rem] rounded-full p-0.5 transition-colors duration-300 focus:outline-none flex items-center shadow-inner cursor-pointer"
       style={{
         backgroundColor: checked ? "#b88a4f" : "#e6dccf",
         justifyContent: checked ? "flex-start" : "flex-end"
@@ -72,7 +72,7 @@ const Switch = React.memo(function Switch({
       <motion.div
         layout
         transition={{ type: "spring", stiffness: 500, damping: 28 }}
-        className="w-4.5 h-4.5 rounded-full bg-white shadow-md border border-white"
+        className="w-[1.125rem] h-[1.125rem] rounded-full bg-white shadow-md border border-white"
       />
     </button>
   );
@@ -121,7 +121,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
       <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
 
       {/* ── FLOATING TOP HEADER ── */}
-      <div className="fixed top-6 left-5 right-5 flex items-center justify-between z-45 pointer-events-none">
+      <div className="fixed top-6 left-5 right-5 flex items-center justify-between z-[45] pointer-events-none">
         {/* Right Element (in RTL): Settings Capsule */}
         <div className="bg-[#f7f2ea]/95 backdrop-blur-md px-5 h-10 rounded-full shadow-[0_8px_24px_rgba(43,26,16,0.08)] border border-[#e6dccf] flex items-center justify-center pointer-events-auto">
           <span className="text-[14.5px] font-black text-[#2b1a10] whitespace-nowrap pt-0.5">الإعدادات</span>

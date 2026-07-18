@@ -192,7 +192,7 @@ export default function QuranSurahsScreen({
                         <div className="flex items-center gap-0.5 h-3.5 shrink-0" dir="ltr">
                           <span className={`w-0.5 bg-white rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_100ms]" : "h-1"}`} style={{ height: isPlaying ? "100%" : "3px" }} />
                           <span className={`w-0.5 bg-white rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_300ms]" : "h-2"}`} style={{ height: isPlaying ? "60%" : "8px" }} />
-                          <span className={`w-0.5 bg-white rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_500ms]" : "h-1.2"}`} style={{ height: isPlaying ? "80%" : "5px" }} />
+                          <span className={`w-0.5 bg-white rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_500ms]" : "h-[0.3rem]"}`} style={{ height: isPlaying ? "80%" : "5px" }} />
                         </div>
                       </div>
                     ) : (
@@ -228,7 +228,7 @@ export default function QuranSurahsScreen({
                       e.stopPropagation();
                       if (onReadSurah) onReadSurah(surahId);
                     }}
-                    className="w-8.5 h-8.5 flex items-center justify-center rounded-full text-[#2b1a10] bg-[#2b1a10]/5 hover:bg-[#2b1a10]/10 active:scale-95 transition-all"
+                    className="w-[2.125rem] h-[2.125rem] flex items-center justify-center rounded-full text-[#2b1a10] bg-[#2b1a10]/5 hover:bg-[#2b1a10]/10 active:scale-95 transition-all"
                     title="اقرأ وتدبر الآيات"
                   >
                     <BookOpen size={15} strokeWidth={2.2} />
@@ -236,7 +236,7 @@ export default function QuranSurahsScreen({
 
                   <button 
                     onClick={(e) => handleBookmarkToggle(surahId, e)}
-                    className={`w-8.5 h-8.5 flex items-center justify-center rounded-full active:scale-95 transition-all ${
+                    className={`w-[2.125rem] h-[2.125rem] flex items-center justify-center rounded-full active:scale-95 transition-all ${
                       isBookmarked 
                         ? "text-[#b88a4f] bg-[#b88a4f]/10" 
                         : "text-[#7f6a55] hover:bg-[#b88a4f]/5"
@@ -248,7 +248,7 @@ export default function QuranSurahsScreen({
                   <button 
                     onClick={(e) => handleDownloadToggle(surahId, e)}
                     disabled={isDownloading}
-                    className={`w-8.5 h-8.5 flex items-center justify-center rounded-full active:scale-95 transition-all ${
+                    className={`w-[2.125rem] h-[2.125rem] flex items-center justify-center rounded-full active:scale-95 transition-all ${
                       isDownloaded 
                         ? "text-[#b88a4f] bg-[#b88a4f]/10 hover:bg-[#b88a4f]/20" 
                         : isDownloading

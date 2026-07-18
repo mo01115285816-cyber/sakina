@@ -194,7 +194,7 @@ export const SecondaryPrayerTimesAccordion = React.memo(function SecondaryPrayer
                       {/* Mini toggle */}
                       <button
                         onClick={() => onToggleEnabled(timing.id, !pref.enabled)}
-                        className="relative w-8 h-4.5 rounded-full p-0.5 transition-colors duration-300 cursor-pointer flex items-center"
+                        className="relative w-8 h-[1.125rem] rounded-full p-0.5 transition-colors duration-300 cursor-pointer flex items-center"
                         style={{
                           backgroundColor: pref.enabled ? '#b88a4f' : '#e6dccf',
                           justifyContent: pref.enabled ? 'flex-start' : 'flex-end',

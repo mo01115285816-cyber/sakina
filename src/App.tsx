@@ -875,7 +875,7 @@ export default function App() {
         </div>
 
         {/* TAB: SAKEENAH AI */}
-        <div className={activeTab === "sakeenah-ai" && !showAzkarCounter ? "block relative w-full h-dvh overflow-hidden" : "hidden"}>
+        <div className={activeTab === "sakeenah-ai" && !showAzkarCounter ? "block relative w-full h-screen overflow-hidden" : "hidden"}>
           <SakeenahAIScreen onBack={handleBackToMain} />
         </div>
 

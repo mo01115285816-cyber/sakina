@@ -216,7 +216,7 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
                   onClick={() => handleModeChange(mode)}
                   className={`w-full flex items-center justify-between rounded-[14px] px-3 py-3 transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-[#b88a4f]/8 border border-[#b88a4f]/25'
+                      ? 'bg-[#b88a4f]/[0.08] border border-[#b88a4f]/25'
                       : 'hover:bg-[#f7f2ea] border border-transparent'
                   }`}
                 >
