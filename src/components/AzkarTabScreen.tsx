@@ -97,7 +97,7 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({ onOpenAzkarCounter, 
   ];
 
   return (
-    <div dir="rtl" className="bg-[#ece7de] min-h-screen max-w-[390px] mx-auto overflow-y-auto pb-28 font-[Cairo]">
+    <div dir="rtl" className="bg-[#ece7de] min-h-screen max-w-[390px] mx-auto overflow-y-auto pb-28 font-thmanyah-sans">
       
       {/* ── Header ── */}
       <div className="sticky top-0 z-10 bg-[#ece7de]/90 backdrop-blur-md pt-6 pb-4 px-5 flex items-center justify-between">

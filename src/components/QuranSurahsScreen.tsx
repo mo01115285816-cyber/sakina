@@ -110,7 +110,7 @@ export default function QuranSurahsScreen({
   };
 
   return (
-    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-[Cairo] relative overflow-hidden" dir="rtl">
+    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-thmanyah-sans relative overflow-hidden" dir="rtl">
       {/* Background elegant overlay */}
       <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-[#b88a4f]/5 to-transparent pointer-events-none" />
 
@@ -215,7 +215,7 @@ export default function QuranSurahsScreen({
                     }`}>
                       {vocalizedSurahNames[surahId] || `سُورَةُ ${surahNames[surahId]}`}
                     </span>
-                    <span className="text-[8px] md:text-[8.5px] text-[#7f6a55] font-bold mt-1 font-[Cairo]">
+                    <span className="text-[8px] md:text-[8.5px] text-[#7f6a55] font-bold mt-1 font-thmanyah-sans">
                       {isDownloaded ? "متاحة بدون إنترنت" : "تتطلب اتصال بالإنترنت"}
                     </span>
                   </div>

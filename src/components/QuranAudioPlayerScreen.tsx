@@ -173,7 +173,7 @@ export default function QuranAudioPlayerScreen({
   const formattedSurahName = quranicSurahNames[surahId] || `سُورَةُ ${surahId}`;
 
   return (
-    <div className="h-full w-full bg-[#ece7de] text-[#2b1a10] flex flex-col font-[Cairo] relative overflow-hidden" dir="rtl">
+    <div className="h-full w-full bg-[#ece7de] text-[#2b1a10] flex flex-col font-thmanyah-sans relative overflow-hidden" dir="rtl">
       {/* Background Soft Gradients */}
       <div className="absolute top-[-10%] left-[-20%] w-[350px] h-[350px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />

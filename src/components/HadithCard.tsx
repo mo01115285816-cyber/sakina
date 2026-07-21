@@ -32,7 +32,7 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
 
         {/* Hadith Text Area (Scrollable if needed) */}
         <div className="overflow-y-auto no-scrollbar pb-2">
-          <p className="text-[14px] md:text-[15px] font-bold leading-relaxed text-[#2b1a10]" style={{ fontFamily: '"Cairo", "Segoe UI", serif' }}>
+          <p className="text-[14px] md:text-[15px] font-bold leading-relaxed text-[#2b1a10]" style={{ fontFamily: '"Thmanyah Serif Text", serif' }}>
             «{todayHadith.text}»
           </p>
 

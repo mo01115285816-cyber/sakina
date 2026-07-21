@@ -1,23 +1,73 @@
 /* ═══════════════════════════════════════════════════════════════
-   القاعدة #2: @import دائماً أولاً — قبل أي rule آخر
+   القاعدة #2: @font-face دائماً أولاً — قبل أي rule آخر
    القاعدة #3: Tailwind v3 directives (ليس @import "tailwindcss" من v4)
    القاعدة #5: لا Safe Area padding مع Immersive Mode
    ═══════════════════════════════════════════════════════════════ */
 
-/* Google Fonts CDN — يجب أن يكون قبل Tailwind directives */
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap");
+/* ===== Thmanyah Fonts — @font-face أولاً ===== */
 
-/* Tailwind v3 directives — لا تستخدم @import "tailwindcss" (هذا لـ v4) */
+/* Thmanyah Sans — بديل Cairo للواجهات */
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/thmanyahsans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/thmanyahsans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Thmanyah Serif Text — بديل Amiri للنصوص والقراءة */
+@font-face {
+  font-family: 'Thmanyah Serif Text';
+  src: url('/fonts/thmanyahseriftext-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Thmanyah Serif Text';
+  src: url('/fonts/thmanyahseriftext-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Thmanyah Serif Display — بديل Amiri Quran للعناوين الكبرى والآيات */
+@font-face {
+  font-family: 'Thmanyah Serif Display';
+  src: url('/fonts/thmanyahserifdisplay-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Thmanyah Serif Display';
+  src: url('/fonts/thmanyahserifdisplay-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tailwind v3 directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════
-   بعد ذلك: @font-face + custom CSS + global styles
+   بعد ذلك: custom CSS + global styles
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  font-family: "Thmanyah Sans", system-ui, sans-serif;
   --top-space: 72px;
   --side-space: 48px;
   --bottom-space: 90px;
@@ -226,7 +276,7 @@ html {
   .qcf-page { padding: 12px 24px; }
 }
 
-/* ===== Surah Name Ornament (SuraNames font) ===== */
+/* ===== Surah Name Ornament (SuraNames font — للمصحف فقط) ===== */
 @font-face {
   font-family: 'SuraNames';
   src: url('/fonts/sura_names.woff2') format('woff2');
@@ -268,9 +318,9 @@ html {
   .surah-glyph { font-size: 38px; }
 }
 
-/* ===== Quran Title (for circles, headers, decorative titles) ===== */
+/* ===== Quran Title (للمصحف — يستخدم Thmanyah Serif Display بدلاً من Amiri Quran) ===== */
 .quran-title {
-  font-family: 'Amiri Quran', 'Amiri', serif;
+  font-family: "Thmanyah Serif Display", serif;
   direction: rtl;
   text-align: center;
   color: #2b1a10;

@@ -93,7 +93,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
   }, [filteredSurahs, selectedTypeFilter]);
 
   return (
-    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-[Cairo] relative overflow-hidden" dir="rtl">
+    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-thmanyah-sans relative overflow-hidden" dir="rtl">
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -270,14 +270,14 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                       {/* Left Side: Metadata, Verses Badge, and Arrow */}
                       <div className="flex items-center shrink-0 gap-1 md:gap-1.5 ml-0.5 md:ml-1">
                         {/* Metadata: Type | Page */}
-                        <span className="text-[7.5px] md:text-[8px] text-[#8a7662] font-black whitespace-nowrap select-none font-[Cairo] pt-[1.5px] mr-1 md:mr-2">
+                        <span className="text-[7.5px] md:text-[8px] text-[#8a7662] font-black whitespace-nowrap select-none font-thmanyah-sans pt-[1.5px] mr-1 md:mr-2">
                           {surah.type === "مكية" ? "مكية" : "مدنية"}
                           <span className="mx-0.5 md:mx-1 opacity-30 font-normal">|</span>
                           صفحة {SURAH_START_PAGES[surah.id] || 1}
                         </span>
 
                         {/* Verses Count Pill Badge */}
-                        <div className="bg-[#b88a4f]/10 text-[#b88a4f] rounded-full px-2 h-[20px] flex items-center justify-center text-[7.5px] md:text-[8px] font-black whitespace-nowrap select-none font-[Cairo] shadow-sm -mt-[1px]">
+                        <div className="bg-[#b88a4f]/10 text-[#b88a4f] rounded-full px-2 h-[20px] flex items-center justify-center text-[7.5px] md:text-[8px] font-black whitespace-nowrap select-none font-thmanyah-sans shadow-sm -mt-[1px]">
                           {surah.versesCount} آية
                         </div>
 
@@ -408,7 +408,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                 placeholder="البحث عن سورة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-full bg-transparent border-none outline-none text-[15px] font-[Cairo] font-bold text-[#2b1a10] placeholder:text-[#7f6a55] px-2 pt-0.5"
+                className="w-full h-full bg-transparent border-none outline-none text-[15px] font-thmanyah-sans font-bold text-[#2b1a10] placeholder:text-[#7f6a55] px-2 pt-0.5"
                 tabIndex={isSearchActive ? 0 : -1}
               />
             </div>

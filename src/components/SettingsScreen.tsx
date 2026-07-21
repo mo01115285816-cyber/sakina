@@ -114,7 +114,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
   const [isAsrExpanded, setIsAsrExpanded] = useState(false);
 
   return (
-    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-24 pb-28 font-[Cairo] bg-[#ece7de] min-h-screen relative overflow-hidden">
+    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-24 pb-28 font-thmanyah-sans bg-[#ece7de] min-h-screen relative overflow-hidden">
       
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />

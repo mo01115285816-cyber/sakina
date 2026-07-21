@@ -613,7 +613,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack }:
   };
 
   return (
-    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-[Cairo] bg-[#ece7de] h-screen relative flex flex-col overflow-hidden">
+    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-thmanyah-sans bg-[#ece7de] h-screen relative flex flex-col overflow-hidden">
       
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />

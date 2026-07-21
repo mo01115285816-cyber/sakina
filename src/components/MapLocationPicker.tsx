@@ -180,7 +180,7 @@ export default function MapLocationPicker({ initialLat, initialLon, onSelect, on
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-white" dir="rtl" style={{ fontFamily: 'Cairo, sans-serif' }}>
+    <div className="fixed inset-0 z-[100] flex flex-col bg-white" dir="rtl" style={{ fontFamily: '"Thmanyah Sans", system-ui' }}>
       {/* Top Header */}
       <div className="absolute top-0 inset-x-0 z-[110] flex items-start justify-between p-4 pt-6 bg-gradient-to-b from-black/40 to-transparent pointer-events-none">
         <button

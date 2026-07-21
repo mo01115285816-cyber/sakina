@@ -163,10 +163,10 @@ export default function QuranLiveBroadcast({
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <h3 className="text-[15px] font-black text-white leading-tight mb-1 font-[Cairo]">
+                  <h3 className="text-[15px] font-black text-white leading-tight mb-1 font-thmanyah-sans">
                     {activeStation.name}
                   </h3>
-                  <p className="text-[11px] text-white/80 font-medium leading-none font-[Cairo]">
+                  <p className="text-[11px] text-white/80 font-medium leading-none font-thmanyah-sans">
                     {activeStation.subtitle}
                   </p>
                 </motion.div>
@@ -230,7 +230,7 @@ export default function QuranLiveBroadcast({
                 <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center mb-1">
                   <RadioTower size={14} className="opacity-90" />
                 </div>
-                <span className="text-[10px] font-black tracking-tight leading-none font-[Cairo] whitespace-nowrap mt-0.5">القرآن الكريم</span>
+                <span className="text-[10px] font-black tracking-tight leading-none font-thmanyah-sans whitespace-nowrap mt-0.5">القرآن الكريم</span>
               </div>
             ) : (
               /* Cairo Egypt Logo box: Emerald/Gold style */
@@ -239,7 +239,7 @@ export default function QuranLiveBroadcast({
                 <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center mb-1">
                   <RadioReceiver size={14} className="opacity-90" />
                 </div>
-                <span className="text-[10px] font-black tracking-tight leading-none font-[Cairo] whitespace-nowrap mt-0.5">إذاعة القاهرة</span>
+                <span className="text-[10px] font-black tracking-tight leading-none font-thmanyah-sans whitespace-nowrap mt-0.5">إذاعة القاهرة</span>
               </div>
             )}
 

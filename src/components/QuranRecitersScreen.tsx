@@ -309,7 +309,7 @@ export default function QuranRecitersScreen({
   };
 
   return (
-    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-[Cairo] relative overflow-hidden" dir="rtl">
+    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-thmanyah-sans relative overflow-hidden" dir="rtl">
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -512,7 +512,7 @@ export default function QuranRecitersScreen({
                 <button
                   type="button"
                   onClick={() => setVisibleCount((prev) => prev + 45)}
-                  className="bg-[#f7f2ea] hover:bg-[#e8dfd4] border border-[#e6dccf] text-[#b88a4f] px-6 py-3 rounded-full text-[14px] font-bold transition-all active:scale-95 shadow-sm font-[Cairo]"
+                  className="bg-[#f7f2ea] hover:bg-[#e8dfd4] border border-[#e6dccf] text-[#b88a4f] px-6 py-3 rounded-full text-[14px] font-bold transition-all active:scale-95 shadow-sm font-thmanyah-sans"
                 >
                   عرض المزيد من القراء ({filteredReciters.length - visibleCount})
                 </button>
@@ -583,7 +583,7 @@ export default function QuranRecitersScreen({
               placeholder="البحث عن قارئ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-full bg-transparent border-none outline-none text-[15px] font-[Cairo] font-bold text-[#2b1a10] placeholder:text-[#7f6a55] px-2 pt-0.5"
+              className="w-full h-full bg-transparent border-none outline-none text-[15px] font-thmanyah-sans font-bold text-[#2b1a10] placeholder:text-[#7f6a55] px-2 pt-0.5"
               tabIndex={isSearchActive ? 0 : -1}
             />
           </div>

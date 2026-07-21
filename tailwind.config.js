@@ -7,9 +7,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        cairo: ['Cairo', 'sans-serif'],
-        amiri: ['Amiri', 'serif'],
-        'amiri-quran': ['Amiri Quran', 'serif'],
+        'thmanyah-sans': ['"Thmanyah Sans"', 'system-ui', 'sans-serif'],
+        'thmanyah-serif-text': ['"Thmanyah Serif Text"', 'serif'],
+        'thmanyah-serif-display': ['"Thmanyah Serif Display"', 'serif'],
         'sura-names': ['SuraNames', 'serif'],
       },
     },

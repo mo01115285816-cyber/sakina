@@ -66,7 +66,7 @@ export default function ManualLocationDialog({
     <>
       <AnimatePresence>
         {isOpen && !showMapPicker && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center sm:p-4" dir="rtl" style={{ fontFamily: 'Cairo, sans-serif' }}>
+          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center sm:p-4" dir="rtl" style={{ fontFamily: '"Thmanyah Sans", system-ui' }}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

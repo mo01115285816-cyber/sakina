@@ -56,7 +56,7 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center font-[Cairo] bg-gradient-to-b from-[#e6dccf] via-[#ece7de] to-[#fdfcfb] text-[#2b1a10]"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center font-thmanyah-sans bg-gradient-to-b from-[#e6dccf] via-[#ece7de] to-[#fdfcfb] text-[#2b1a10]"
       dir="rtl"
     >
       {/* Close Button at top left */}

@@ -75,7 +75,7 @@ export default function QcfVerse({
         className={className}
         style={{
           ...style,
-          fontFamily: '"Amiri", "Cairo", serif',
+          fontFamily: '"Thmanyah Serif Text", serif',
           direction: 'rtl',
         }}
       >

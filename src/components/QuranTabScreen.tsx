@@ -619,12 +619,12 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
 
                 {/* Surah Name & Reciter Subtitle */}
                 <div className="text-right flex flex-col justify-center pb-[1px] overflow-hidden flex-1 max-w-[200px] xs:max-w-[220px] sm:max-w-[250px]">
-                  <h4 className="text-[14px] font-black text-[#2b1a10] leading-tight font-[Cairo] mb-[1px] truncate w-full">
+                  <h4 className="text-[14px] font-black text-[#2b1a10] leading-tight font-thmanyah-sans mb-[1px] truncate w-full">
                     {currentPlayingRadio !== null 
                       ? currentPlayingRadio.name 
                       : (surahNames[playingSurahId!] || `سورة ${playingSurahId}`)}
                   </h4>
-                  <p className="text-[11.5px] text-[#8c7a65] font-bold leading-none font-[Cairo] truncate w-full">
+                  <p className="text-[11.5px] text-[#8c7a65] font-bold leading-none font-thmanyah-sans truncate w-full">
                     {currentPlayingRadio !== null ? "بث مباشر" : selectedReciter.name}
                   </p>
                 </div>

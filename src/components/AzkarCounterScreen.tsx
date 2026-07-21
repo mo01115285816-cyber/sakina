@@ -340,7 +340,7 @@ export default function AzkarCounterScreen({
       transition={{ type: "spring", damping: 28, stiffness: 220 }}
       dir="rtl"
       className="fixed inset-0 z-50 flex flex-col bg-gradient-to-b from-[#ece7de] to-[#e4d9ca] md:max-w-[430px] md:mx-auto md:shadow-[0_24px_64px_rgba(43,26,16,0.3)] md:my-6 md:rounded-[40px] md:border md:border-white/20 overflow-hidden"
-      style={{ fontFamily: "Cairo, sans-serif" }}
+      style={{ fontFamily: '"Thmanyah Sans", system-ui' }}
     >
       {/* ── HEADER NAVIGATION ROW ── */}
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-2">

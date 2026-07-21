@@ -105,7 +105,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
   }, [selectedNameId]);
 
   return (
-    <div dir="rtl" className="fixed inset-0 z-50 bg-[#ece7de] overflow-hidden font-[Cairo] flex flex-col h-full">
+    <div dir="rtl" className="fixed inset-0 z-50 bg-[#ece7de] overflow-hidden font-thmanyah-sans flex flex-col h-full">
       {/* ── FLOATING HEADER ── */}
       <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-40 pointer-events-none">
         {/* Right Side (First in RTL): Title Capsule */}
@@ -339,7 +339,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
                       <span>الدليل والأثر من القرآن والسنة</span>
                     </h4>
                     <div className="rounded-2xl border border-amber-900/10 bg-amber-50/20 p-4 text-center">
-                      <p className="text-[16px] md:text-[18px] font-normal leading-relaxed text-[#593d18] select-text" style={{ fontFamily: '"Amiri", "Cairo", serif' }}>
+                      <p className="text-[16px] md:text-[18px] font-normal leading-relaxed text-[#593d18] select-text" style={{ fontFamily: '"Thmanyah Serif Text", serif' }}>
                         {selectedName.proof}
                       </p>
                     </div>

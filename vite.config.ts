@@ -5,6 +5,10 @@ import { defineConfig } from 'vite';
 export default defineConfig(() => {
   return {
     base: './',  // مهم لـ Capacitor — المسارات النسبية
+    build: {
+      outDir: 'dist/public',  // Vercel: يبحث عن الملفات في dist/public
+      emptyOutDir: true,
+    },
     plugins: [react()],  // فقط react plugin — PostCSS يقرأ postcss.config.js تلقائياً
     resolve: {
       alias: {
